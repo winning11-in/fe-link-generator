@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout, Typography, Row, Col, Spin, message } from 'antd';
@@ -6,6 +7,9 @@ import { useAuth } from '../hooks/useAuth';
 import { qrCodeAPI, scansAPI } from '../services/api';
 import Header from '../components/dashboard/Header';
 import StatCard from '../components/analytics/StatCard';
+import ScansOverTimeChart from '../components/analytics/ScansOverTimeChart';
+import DeviceBreakdownChart from '../components/analytics/DeviceBreakdownChart';
+import UniqueVisitorsChart from '../components/analytics/UniqueVisitorsChart';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -20,6 +24,9 @@ const Analytics = () => {
     engagementRate: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [scansOverTime, setScansOverTime] = useState<any[]>([]);
+  const [deviceBreakdown, setDeviceBreakdown] = useState<any[]>([]);
+  const [uniqueVisitorsData, setUniqueVisitorsData] = useState<any[]>([]);
 
   useEffect(() => {
     fetchAnalytics();
@@ -37,12 +44,10 @@ const Analytics = () => {
       const scans = scansRes.scans || [];
 
       // Calculate unique visitors based on unique IPs
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const uniqueIPs = new Set(scans.map((scan: any) => scan.ip));
       const uniqueVisitors = uniqueIPs.size;
 
       // Calculate total scans
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const totalScans = qrCodes.reduce((sum: number, qr: any) => sum + (qr.scanCount || 0), 0);
 
       // Calculate engagement rate (scans per QR code)
@@ -56,6 +61,80 @@ const Analytics = () => {
         qrCodes: qrCodes.length,
         engagementRate: parseFloat(engagementRate),
       });
+
+      // Process scans over time (last 7 days)
+      const last7Days = Array.from({ length: 7 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (6 - i));
+        return date.toLocaleDateString('en-US', { weekday: 'short' });
+      });
+
+      const scansByDay = last7Days.map((day, index) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (6 - index));
+        const dayScans = scans.filter((scan: any) => {
+          const scanDate = new Date(scan.timestamp);
+          return scanDate.toDateString() === date.toDateString();
+        });
+        return {
+          name: day,
+          scans: dayScans.length,
+        };
+      });
+      setScansOverTime(scansByDay);
+
+      // Process device breakdown
+      const deviceCounts: any = {
+        mobile: 0,
+        tablet: 0,
+        desktop: 0,
+      };
+
+      scans.forEach((scan: any) => {
+        const deviceType = scan.device?.type?.toLowerCase() || 'desktop';
+        if (deviceType === 'mobile' || deviceType === 'smartphone') {
+          deviceCounts.mobile++;
+        } else if (deviceType === 'tablet') {
+          deviceCounts.tablet++;
+        } else {
+          deviceCounts.desktop++;
+        }
+      });
+
+      const total = scans.length || 1;
+      setDeviceBreakdown([
+        {
+          name: 'Mobile',
+          value: deviceCounts.mobile,
+          percentage: Math.round((deviceCounts.mobile / total) * 100),
+        },
+        {
+          name: 'Desktop',
+          value: deviceCounts.desktop,
+          percentage: Math.round((deviceCounts.desktop / total) * 100),
+        },
+        {
+          name: 'Tablet',
+          value: deviceCounts.tablet,
+          percentage: Math.round((deviceCounts.tablet / total) * 100),
+        },
+      ]);
+
+      // Process unique visitors over time
+      const visitorsByDay = last7Days.map((day, index) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (6 - index));
+        const dayScans = scans.filter((scan: any) => {
+          const scanDate = new Date(scan.timestamp);
+          return scanDate.toDateString() === date.toDateString();
+        });
+        const uniqueIPs = new Set(dayScans.map((scan: any) => scan.ip));
+        return {
+          name: day,
+          visitors: uniqueIPs.size,
+        };
+      });
+      setUniqueVisitorsData(visitorsByDay);
     } catch {
       message.error('Failed to fetch analytics');
     } finally {
@@ -94,48 +173,68 @@ const Analytics = () => {
               <Spin size="large" />
             </div>
           ) : (
-            <Row gutter={[24, 24]}>
-              <Col xs={24} sm={12} lg={6}>
-                <StatCard
-                  title="Total Scans"
-                  value={stats.totalScans.toLocaleString()}
-                  change="+12.5%"
-                  icon={Zap}
-                  iconColor="#6366f1"
-                  iconBg="#eff6ff"
-                />
-              </Col>
-              <Col xs={24} sm={12} lg={6}>
-                <StatCard
-                  title="Unique Visitors"
-                  value={stats.uniqueVisitors.toLocaleString()}
-                  change="+8.2%"
-                  icon={Users}
-                  iconColor="#3b82f6"
-                  iconBg="#dbeafe"
-                />
-              </Col>
-              <Col xs={24} sm={12} lg={6}>
-                <StatCard
-                  title="QR Codes"
-                  value={stats.qrCodes}
-                  change="+3"
-                  icon={QrCodeIcon}
-                  iconColor="#8b5cf6"
-                  iconBg="#f3e8ff"
-                />
-              </Col>
-              <Col xs={24} sm={12} lg={6}>
-                <StatCard
-                  title="Engagement Rate"
-                  value={`${stats.engagementRate}%`}
-                  change="+5.1%"
-                  icon={TrendingUp}
-                  iconColor="#10b981"
-                  iconBg="#d1fae5"
-                />
-              </Col>
-            </Row>
+            <>
+              <Row gutter={[24, 24]}>
+                <Col xs={24} sm={12} lg={6}>
+                  <StatCard
+                    title="Total Scans"
+                    value={stats.totalScans.toLocaleString()}
+                    change="+12.5%"
+                    icon={Zap}
+                    iconColor="#6366f1"
+                    iconBg="#eff6ff"
+                  />
+                </Col>
+                <Col xs={24} sm={12} lg={6}>
+                  <StatCard
+                    title="Unique Visitors"
+                    value={stats.uniqueVisitors.toLocaleString()}
+                    change="+8.2%"
+                    icon={Users}
+                    iconColor="#3b82f6"
+                    iconBg="#dbeafe"
+                  />
+                </Col>
+                <Col xs={24} sm={12} lg={6}>
+                  <StatCard
+                    title="QR Codes"
+                    value={stats.qrCodes}
+                    change="+3"
+                    icon={QrCodeIcon}
+                    iconColor="#8b5cf6"
+                    iconBg="#f3e8ff"
+                  />
+                </Col>
+                <Col xs={24} sm={12} lg={6}>
+                  <StatCard
+                    title="Engagement Rate"
+                    value={`${stats.engagementRate}%`}
+                    change="+5.1%"
+                    icon={TrendingUp}
+                    iconColor="#10b981"
+                    iconBg="#d1fae5"
+                  />
+                </Col>
+              </Row>
+
+              {/* Charts Section */}
+              <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
+                {/* Scans Over Time */}
+                <Col xs={24} lg={16}>
+                  <ScansOverTimeChart data={scansOverTime} />
+                </Col>
+
+                {/* Device Breakdown */}
+                <Col xs={24} lg={8}>
+                  <DeviceBreakdownChart data={deviceBreakdown} />
+                </Col>
+
+                {/* Unique Visitors Chart */}
+                <Col xs={24}>
+                  <UniqueVisitorsChart data={uniqueVisitorsData} />
+                </Col>
+              </Row>
+            </>
           )}
         </div>
       </Content>
