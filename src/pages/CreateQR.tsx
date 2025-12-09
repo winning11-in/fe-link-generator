@@ -49,6 +49,12 @@ const CreateQR = () => {
   const [wifiEncryption, setWifiEncryption] = useState('WPA');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
+  
+  // UPI fields
+  const [upiID, setUpiID] = useState('');
+  const [upiName, setUpiName] = useState('');
+  const [upiAmount, setUpiAmount] = useState('');
+  const [upiNote, setUpiNote] = useState('');
 
   const generateQRData = () => {
     switch (selectedTemplate.type) {
@@ -66,6 +72,14 @@ const CreateQR = () => {
         return `WIFI:T:${wifiEncryption};S:${wifiSSID};P:${wifiPassword};;`;
       case 'location':
         return `geo:${latitude},${longitude}`;
+      case 'upi': {
+        // UPI payment URL format: upi://pay?pa=<UPI_ID>&pn=<Name>&am=<Amount>&tn=<Note>
+        let upiUrl = `upi://pay?pa=${upiID}`;
+        if (upiName) upiUrl += `&pn=${encodeURIComponent(upiName)}`;
+        if (upiAmount) upiUrl += `&am=${upiAmount}`;
+        if (upiNote) upiUrl += `&tn=${encodeURIComponent(upiNote)}`;
+        return upiUrl;
+      }
       default:
         return qrData;
     }
@@ -239,6 +253,14 @@ const CreateQR = () => {
                       setLatitude={setLatitude}
                       longitude={longitude}
                       setLongitude={setLongitude}
+                      upiID={upiID}
+                      setUpiID={setUpiID}
+                      upiName={upiName}
+                      setUpiName={setUpiName}
+                      upiAmount={upiAmount}
+                      setUpiAmount={setUpiAmount}
+                      upiNote={upiNote}
+                      setUpiNote={setUpiNote}
                     />
                   </div>
                 </Space>

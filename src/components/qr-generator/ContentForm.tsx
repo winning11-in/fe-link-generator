@@ -1,10 +1,10 @@
 import { Input, Space, Select } from 'antd';
-import { Link as LinkIcon, Mail, Phone, MessageSquare, Wifi, MapPin } from 'lucide-react';
+import { Link as LinkIcon, Mail, Phone, MessageSquare, Wifi, MapPin, IndianRupee } from 'lucide-react';
 
 const { TextArea } = Input;
 
 interface ContentFormProps {
-  templateType: 'url' | 'text' | 'email' | 'phone' | 'sms' | 'wifi' | 'location';
+  templateType: 'url' | 'text' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'upi';
   qrData: string;
   setQrData: (value: string) => void;
   emailTo: string;
@@ -29,6 +29,14 @@ interface ContentFormProps {
   setLatitude: (value: string) => void;
   longitude: string;
   setLongitude: (value: string) => void;
+  upiID: string;
+  setUpiID: (value: string) => void;
+  upiName: string;
+  setUpiName: (value: string) => void;
+  upiAmount: string;
+  setUpiAmount: (value: string) => void;
+  upiNote: string;
+  setUpiNote: (value: string) => void;
 }
 
 const ContentForm = ({
@@ -57,6 +65,14 @@ const ContentForm = ({
   setLatitude,
   longitude,
   setLongitude,
+  upiID,
+  setUpiID,
+  upiName,
+  setUpiName,
+  upiAmount,
+  setUpiAmount,
+  upiNote,
+  setUpiNote,
 }: ContentFormProps) => {
   switch (templateType) {
     case 'url':
@@ -174,6 +190,37 @@ const ContentForm = ({
             placeholder="Longitude (e.g., -74.0060)"
             value={longitude}
             onChange={(e) => setLongitude(e.target.value)}
+          />
+        </Space>
+      );
+    case 'upi':
+      return (
+        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+          <Input
+            size="large"
+            placeholder="UPI ID (e.g., yourname@paytm)"
+            value={upiID}
+            onChange={(e) => setUpiID(e.target.value)}
+            prefix={<IndianRupee size={18} />}
+          />
+          <Input
+            size="large"
+            placeholder="Payee Name (optional)"
+            value={upiName}
+            onChange={(e) => setUpiName(e.target.value)}
+          />
+          <Input
+            size="large"
+            placeholder="Amount (optional, e.g., 100.00)"
+            type="number"
+            value={upiAmount}
+            onChange={(e) => setUpiAmount(e.target.value)}
+          />
+          <Input
+            size="large"
+            placeholder="Note/Description (optional)"
+            value={upiNote}
+            onChange={(e) => setUpiNote(e.target.value)}
           />
         </Space>
       );
