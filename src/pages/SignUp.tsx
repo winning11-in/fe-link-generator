@@ -24,9 +24,7 @@ const SignUp = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { signup } = useAuth();
-  const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<SignUpFormData>();
-
-  const password = watch('password');
+  const { register, handleSubmit, getValues, formState: { errors, isSubmitting } } = useForm<SignUpFormData>();
 
   const onSubmit = async (data: SignUpFormData) => {
     setError('');
@@ -121,7 +119,7 @@ const SignUp = () => {
               autoComplete="new-password"
               {...register('confirmPassword', {
                 required: 'Please confirm your password',
-                validate: value => value === password || 'Passwords do not match'
+                validate: value => value === getValues('password') || 'Passwords do not match'
               })}
               error={!!errors.confirmPassword}
               helperText={errors.confirmPassword?.message}
