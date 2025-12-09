@@ -64,9 +64,22 @@ export const qrCodeAPI = {
 
   // Create new QR code
   create: async (data: {
-    type: 'url' | 'text' | 'email' | 'phone';
+    type: 'url' | 'text' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'upi';
     data: string;
     title: string;
+    customization?: {
+      qrColor: string;
+      bgColor: string;
+      qrSize: number;
+      errorLevel: 'L' | 'M' | 'Q' | 'H';
+      dotStyle: string;
+      cornerSquareStyle: string;
+      cornerDotStyle: string;
+      logo: string | null;
+      logoSize: number;
+      logoPadding: number;
+      removeBackground: boolean;
+    };
   }) => {
     const response = await api.post('/qrcodes', data);
     return response.data;

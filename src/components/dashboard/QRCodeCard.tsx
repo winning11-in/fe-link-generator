@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, Button, Space, Typography, Tag, message } from 'antd';
 import { BarChart3, Trash2, Download, Share2 } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
+import { useRef, useEffect } from 'react';
+import QRCodeStyling from 'qr-code-styling';
 import type { QRCode } from '../../types';
 
 const { Text, Title } = Typography;
@@ -12,40 +14,81 @@ interface QRCodeCardProps {
 }
 
 const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
+  const qrCodeRef = useRef<QRCodeStyling | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const scanUrl = `${window.location.origin}/scan/${qr._id}`;
 
-  const handleDownload = () => {
-    const svg = document.getElementById(`qr-code-${qr._id}`) as unknown as SVGElement;
-    if (!svg) return;
+  useEffect(() => {
+    if (!containerRef.current) return;
 
-    // Download as PNG
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const svgData = new XMLSerializer().serializeToString(svg);
-    const img = new Image();
-    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(svgBlob);
+    const container = containerRef.current;
+    const customization = qr.customization;
 
-    img.onload = () => {
-      canvas.width = 512;
-      canvas.height = 512;
-      ctx?.drawImage(img, 0, 0, 512, 512);
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const pngUrl = URL.createObjectURL(blob);
-          const downloadLink = document.createElement('a');
-          downloadLink.href = pngUrl;
-          downloadLink.download = `${qr.title.replace(/\s+/g, '-')}-qr.png`;
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
-          URL.revokeObjectURL(pngUrl);
-        }
-      });
-      URL.revokeObjectURL(url);
+    const errorCorrectionMap: Record<string, 'L' | 'M' | 'Q' | 'H'> = {
+      'L': 'L',
+      'M': 'M',
+      'Q': 'Q',
+      'H': 'H'
     };
 
-    img.src = url;
+    const qrCodeConfig: any = {
+      width: 120,
+      height: 120,
+      data: scanUrl,
+      dotsOptions: {
+        color: customization?.qrColor || '#000000',
+        type: (customization?.dotStyle || 'square'),
+      },
+      backgroundOptions: {
+        color: customization?.bgColor || '#ffffff',
+      },
+      cornersSquareOptions: {
+        color: customization?.qrColor || '#000000',
+        type: (customization?.cornerSquareStyle || 'square'),
+      },
+      cornersDotOptions: {
+        color: customization?.qrColor || '#000000',
+        type: (customization?.cornerDotStyle || 'square'),
+      },
+      qrOptions: {
+        errorCorrectionLevel: errorCorrectionMap[customization?.errorLevel || 'M'],
+      },
+    };
+
+    // Only add image options if logo exists
+    if (customization?.logo) {
+      qrCodeConfig.imageOptions = {
+        hideBackgroundDots: customization.removeBackground ?? true,
+        imageSize: (customization.logoSize || 50) / 280,
+        margin: customization.logoPadding || 5,
+      };
+      qrCodeConfig.image = customization.logo;
+    }
+
+    try {
+      const qrCode = new QRCodeStyling(qrCodeConfig);
+      
+      container.innerHTML = '';
+      qrCode.append(container);
+      qrCodeRef.current = qrCode;
+    } catch (error) {
+      console.error('Error rendering QR code:', error);
+    }
+
+    return () => {
+      if (container) {
+        container.innerHTML = '';
+      }
+    };
+  }, [qr, scanUrl]);
+
+  const handleDownload = () => {
+    if (!qrCodeRef.current) return;
+    
+    qrCodeRef.current.download({
+      name: qr.title.replace(/\s+/g, '-') + '-qr',
+      extension: 'png',
+    });
     message.success('QR Code downloaded!');
   };
 
@@ -57,7 +100,7 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
           text: `Check out this QR code: ${qr.title}`,
           url: scanUrl,
         });
-      } catch (err) {
+      } catch {
         // User cancelled share
       }
     } else {
@@ -78,17 +121,13 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
         {/* QR Code Preview */}
         <div
           style={{
-            padding: 16,
+            padding: 8,
             background: '#f9fafb',
             borderRadius: 8,
             border: '1px solid #e5e7eb',
           }}
         >
-          <QRCodeSVG
-            id={`qr-code-${qr._id}`}
-            value={`${window.location.origin}/scan/${qr._id}`}
-            size={100}
-          />
+          <div ref={containerRef} style={{ width: 120, height: 120 }} />
         </div>
 
         {/* QR Code Info */}

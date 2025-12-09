@@ -95,14 +95,27 @@ const CreateQR = () => {
         return;
       }
 
-      const qrType = ['url', 'text', 'email', 'phone'].includes(selectedTemplate.type) 
-        ? selectedTemplate.type as 'url' | 'text' | 'email' | 'phone'
+      const qrType = ['url', 'text', 'email', 'phone', 'sms', 'wifi', 'location', 'upi'].includes(selectedTemplate.type) 
+        ? selectedTemplate.type as 'url' | 'text' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'upi'
         : 'text';
 
       await qrCodeAPI.create({
         title,
         data,
         type: qrType,
+        customization: {
+          qrColor,
+          bgColor,
+          qrSize,
+          errorLevel,
+          dotStyle,
+          cornerSquareStyle,
+          cornerDotStyle,
+          logo,
+          logoSize,
+          logoPadding,
+          removeBackground,
+        },
       });
 
       message.success('QR Code created successfully!');

@@ -34,11 +34,24 @@ export interface Scan {
 export interface QRCode {
   _id: string;
   user: string;
-  type: 'url' | 'text' | 'email' | 'phone';
+  type: 'url' | 'text' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'upi';
   data: string;
   title: string;
   scanCount: number;
   isActive: boolean;
+  customization?: {
+    qrColor: string;
+    bgColor: string;
+    qrSize: number;
+    errorLevel: 'L' | 'M' | 'Q' | 'H';
+    dotStyle: string;
+    cornerSquareStyle: string;
+    cornerDotStyle: string;
+    logo: string | null;
+    logoSize: number;
+    logoPadding: number;
+    removeBackground: boolean;
+  };
   createdAt: string;
   updatedAt: string;
 }
