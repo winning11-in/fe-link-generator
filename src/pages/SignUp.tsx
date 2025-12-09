@@ -10,7 +10,10 @@ import {
   Paper,
   Link,
   Alert,
+  Stack,
+  Avatar,
 } from '@mui/material';
+import { PersonAdd as PersonAddIcon } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 
 interface SignUpFormData {
@@ -39,109 +42,146 @@ const SignUp = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
-          <Typography component="h1" variant="h5" align="center" gutterBottom>
-            Sign Up
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      }}
+    >
+      <Container component="main" maxWidth="xs">
+        <Paper
+          elevation={24}
+          sx={{
+            p: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            borderRadius: 3,
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main', width: 56, height: 56 }}>
+            <PersonAddIcon fontSize="large" />
+          </Avatar>
+          
+          <Typography component="h1" variant="h4" fontWeight="bold" gutterBottom>
+            Create Account
+          </Typography>
+          
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Start creating amazing QR codes today
           </Typography>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 2, width: '100%' }}>
               {error}
             </Alert>
           )}
 
-          <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              fullWidth
-              id="name"
-              label="Full Name"
-              autoComplete="name"
-              autoFocus
-              {...register('name', {
-                required: 'Name is required',
-                minLength: {
-                  value: 2,
-                  message: 'Name must be at least 2 characters'
-                }
-              })}
-              error={!!errors.name}
-              helperText={errors.name?.message}
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              id="email"
-              label="Email Address"
-              autoComplete="email"
-              {...register('email', {
-                required: 'Email is required',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Invalid email address'
-                }
-              })}
-              error={!!errors.email}
-              helperText={errors.email?.message}
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="new-password"
-              {...register('password', {
-                required: 'Password is required',
-                minLength: {
-                  value: 6,
-                  message: 'Password must be at least 6 characters'
-                }
-              })}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              label="Confirm Password"
-              type="password"
-              id="confirmPassword"
-              autoComplete="new-password"
-              {...register('confirmPassword', {
-                required: 'Please confirm your password',
-                validate: value => value === getValues('password') || 'Passwords do not match'
-              })}
-              error={!!errors.confirmPassword}
-              helperText={errors.confirmPassword?.message}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Signing Up...' : 'Sign Up'}
-            </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link component={RouterLink} to="/signin" variant="body2">
-                Already have an account? Sign In
-              </Link>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
+            <Stack spacing={2.5}>
+              <TextField
+                fullWidth
+                id="name"
+                label="Full Name"
+                autoComplete="name"
+                autoFocus
+                {...register('name', {
+                  required: 'Name is required',
+                  minLength: {
+                    value: 2,
+                    message: 'Name must be at least 2 characters'
+                  }
+                })}
+                error={!!errors.name}
+                helperText={errors.name?.message}
+              />
+
+              <TextField
+                fullWidth
+                id="email"
+                label="Email Address"
+                autoComplete="email"
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Invalid email address'
+                  }
+                })}
+                error={!!errors.email}
+                helperText={errors.email?.message}
+              />
+
+              <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="new-password"
+                {...register('password', {
+                  required: 'Password is required',
+                  minLength: {
+                    value: 6,
+                    message: 'Password must be at least 6 characters'
+                  }
+                })}
+                error={!!errors.password}
+                helperText={errors.password?.message}
+              />
+
+              <TextField
+                fullWidth
+                label="Confirm Password"
+                type="password"
+                id="confirmPassword"
+                autoComplete="new-password"
+                {...register('confirmPassword', {
+                  required: 'Please confirm your password',
+                  validate: (value) =>
+                    value === getValues('password') || 'Passwords do not match'
+                })}
+                error={!!errors.confirmPassword}
+                helperText={errors.confirmPassword?.message}
+              />
+
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                disabled={isSubmitting}
+                sx={{
+                  mt: 1,
+                  py: 1.5,
+                  textTransform: 'none',
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                }}
+              >
+                {isSubmitting ? 'Creating Account...' : 'Sign Up'}
+              </Button>
+            </Stack>
+
+            <Box sx={{ mt: 3, textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary">
+                Already have an account?{' '}
+                <Link
+                  component={RouterLink}
+                  to="/signin"
+                  underline="hover"
+                  fontWeight="600"
+                  sx={{ color: 'primary.main' }}
+                >
+                  Sign In
+                </Link>
+              </Typography>
             </Box>
           </Box>
         </Paper>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 

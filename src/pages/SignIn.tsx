@@ -10,7 +10,10 @@ import {
   Paper,
   Link,
   Alert,
+  Stack,
+  Avatar,
 } from '@mui/material';
+import { LockOutlined as LockIcon } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 
 interface SignInFormData {
@@ -37,79 +40,115 @@ const SignIn = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
-          <Typography component="h1" variant="h5" align="center" gutterBottom>
-            Sign In
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      }}
+    >
+      <Container component="main" maxWidth="xs">
+        <Paper
+          elevation={24}
+          sx={{
+            p: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            borderRadius: 3,
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'primary.main', width: 56, height: 56 }}>
+            <LockIcon fontSize="large" />
+          </Avatar>
+          
+          <Typography component="h1" variant="h4" fontWeight="bold" gutterBottom>
+            Welcome Back
+          </Typography>
+          
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Sign in to continue to QR Generator
           </Typography>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 2, width: '100%' }}>
               {error}
             </Alert>
           )}
 
-          <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              fullWidth
-              id="email"
-              label="Email Address"
-              autoComplete="email"
-              autoFocus
-              {...register('email', {
-                required: 'Email is required',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Invalid email address'
-                }
-              })}
-              error={!!errors.email}
-              helperText={errors.email?.message}
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              {...register('password', {
-                required: 'Password is required',
-                minLength: {
-                  value: 6,
-                  message: 'Password must be at least 6 characters'
-                }
-              })}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Signing In...' : 'Sign In'}
-            </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link component={RouterLink} to="/signup" variant="body2">
-                Don't have an account? Sign Up
-              </Link>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
+            <Stack spacing={2.5}>
+              <TextField
+                fullWidth
+                id="email"
+                label="Email Address"
+                autoComplete="email"
+                autoFocus
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Invalid email address'
+                  }
+                })}
+                error={!!errors.email}
+                helperText={errors.email?.message}
+              />
+              
+              <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                {...register('password', {
+                  required: 'Password is required',
+                  minLength: {
+                    value: 6,
+                    message: 'Password must be at least 6 characters'
+                  }
+                })}
+                error={!!errors.password}
+                helperText={errors.password?.message}
+              />
+              
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                disabled={isSubmitting}
+                sx={{
+                  mt: 1,
+                  py: 1.5,
+                  textTransform: 'none',
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                }}
+              >
+                {isSubmitting ? 'Signing In...' : 'Sign In'}
+              </Button>
+            </Stack>
+
+            <Box sx={{ mt: 3, textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary">
+                Don't have an account?{' '}
+                <Link
+                  component={RouterLink}
+                  to="/signup"
+                  underline="hover"
+                  fontWeight="600"
+                  sx={{ color: 'primary.main' }}
+                >
+                  Sign Up
+                </Link>
+              </Typography>
             </Box>
           </Box>
         </Paper>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 
