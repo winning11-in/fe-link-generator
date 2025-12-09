@@ -43,6 +43,14 @@ function App() {
               }
             />
             <Route
+              path="/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <CreateQR />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/analytics"
               element={
                 <ProtectedRoute>

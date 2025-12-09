@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Layout, Typography, Card, Row, Col, Input, Button, Space, message, Tabs } from 'antd';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Layout, Typography, Card, Row, Col, Input, Button, Space, message, Tabs, Spin } from 'antd';
 import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { qrCodeAPI } from '../services/api';
@@ -18,6 +17,7 @@ const { Title, Text } = Typography;
 
 const CreateQR = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const { user, logout } = useAuth();
   const [selectedTemplate, setSelectedTemplate] = useState<QRTemplate>(templates[0]);
   const [title, setTitle] = useState('');
@@ -27,6 +27,8 @@ const CreateQR = () => {
   const [qrSize, setQrSize] = useState(256);
   const [errorLevel, setErrorLevel] = useState<'L' | 'M' | 'Q' | 'H'>('M');
   const [loading, setLoading] = useState(false);
+  const [fetchingQR, setFetchingQR] = useState(false);
+  const isEditMode = !!id;
 
   // Advanced customization
   const [dotStyle, setDotStyle] = useState('square');
@@ -55,6 +57,112 @@ const CreateQR = () => {
   const [upiName, setUpiName] = useState('');
   const [upiAmount, setUpiAmount] = useState('');
   const [upiNote, setUpiNote] = useState('');
+
+  // Load existing QR code data when editing
+  useEffect(() => {
+    const loadQRCode = async () => {
+      if (!id) return;
+
+      try {
+        setFetchingQR(true);
+        const response = await qrCodeAPI.getOne(id);
+        console.log('API Response:', response); // Debug log
+        
+        // Backend returns { success: true, qrCode: {...} }
+        // Axios unwraps response.data, so we get { success, qrCode }
+        const qr = response.qrCode;
+
+        if (!qr) {
+          throw new Error('QR code data not found in response');
+        }
+
+        // Set basic fields
+        setTitle(qr.title);
+        setQrData(qr.data);
+
+        // Set customization if available
+        if (qr.customization) {
+          const c = qr.customization;
+          if (c.qrColor) setQrColor(c.qrColor);
+          if (c.bgColor) setBgColor(c.bgColor);
+          if (c.qrSize) setQrSize(c.qrSize);
+          if (c.errorLevel) setErrorLevel(c.errorLevel);
+          if (c.dotStyle) setDotStyle(c.dotStyle);
+          if (c.cornerSquareStyle) setCornerSquareStyle(c.cornerSquareStyle);
+          if (c.cornerDotStyle) setCornerDotStyle(c.cornerDotStyle);
+          if (c.logo) setLogo(c.logo);
+          if (c.logoSize) setLogoSize(c.logoSize);
+          if (c.logoPadding) setLogoPadding(c.logoPadding);
+          if (c.removeBackground !== undefined) setRemoveBackground(c.removeBackground);
+        }
+
+        // Set template and type-specific fields
+        const template = templates.find(t => t.type === qr.type) || templates[0];
+        setSelectedTemplate(template);
+
+        // Parse data based on type
+        switch (qr.type) {
+          case 'email': {
+            const emailMatch = qr.data.match(/mailto:([^?]+)\?subject=([^&]*)&body=(.*)/);
+            if (emailMatch) {
+              setEmailTo(emailMatch[1]);
+              setEmailSubject(decodeURIComponent(emailMatch[2]));
+              setEmailBody(decodeURIComponent(emailMatch[3]));
+            }
+            break;
+          }
+          case 'phone':
+            setPhoneNumber(qr.data.replace('tel:', ''));
+            break;
+          case 'sms': {
+            const smsMatch = qr.data.match(/sms:([^?]+)\?body=(.*)/);
+            if (smsMatch) {
+              setSmsNumber(smsMatch[1]);
+              setSmsMessage(decodeURIComponent(smsMatch[2]));
+            }
+            break;
+          }
+          case 'wifi': {
+            const wifiMatch = qr.data.match(/WIFI:T:([^;]+);S:([^;]+);P:([^;]+);;/);
+            if (wifiMatch) {
+              setWifiEncryption(wifiMatch[1]);
+              setWifiSSID(wifiMatch[2]);
+              setWifiPassword(wifiMatch[3]);
+            }
+            break;
+          }
+          case 'location': {
+            const locMatch = qr.data.match(/geo:([^,]+),(.*)/);
+            if (locMatch) {
+              setLatitude(locMatch[1]);
+              setLongitude(locMatch[2]);
+            }
+            break;
+          }
+          case 'upi': {
+            const upiMatch = qr.data.match(/upi:\/\/pay\?pa=([^&]+)(?:&pn=([^&]*))?(?:&am=([^&]*))?(?:&tn=([^&]*))?/);
+            if (upiMatch) {
+              setUpiID(upiMatch[1]);
+              if (upiMatch[2]) setUpiName(decodeURIComponent(upiMatch[2]));
+              if (upiMatch[3]) setUpiAmount(upiMatch[3]);
+              if (upiMatch[4]) setUpiNote(decodeURIComponent(upiMatch[4]));
+            }
+            break;
+          }
+        }
+
+        message.success('QR Code loaded for editing');
+      } catch (err: any) {
+        console.error('Load QR Error:', err); // Debug log
+        message.error(err.response?.data?.message || err.message || 'Failed to load QR code');
+        navigate('/dashboard');
+      } finally {
+        setFetchingQR(false);
+      }
+    };
+
+    loadQRCode();
+  }, [id, navigate]);
 
   const generateQRData = () => {
     switch (selectedTemplate.type) {
@@ -99,7 +207,7 @@ const CreateQR = () => {
         ? selectedTemplate.type as 'url' | 'text' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'upi'
         : 'text';
 
-      await qrCodeAPI.create({
+      const qrPayload = {
         title,
         data,
         type: qrType,
@@ -116,12 +224,19 @@ const CreateQR = () => {
           logoPadding,
           removeBackground,
         },
-      });
+      };
 
-      message.success('QR Code created successfully!');
+      if (isEditMode) {
+        await qrCodeAPI.update(id!, qrPayload);
+        message.success('QR Code updated successfully!');
+      } else {
+        await qrCodeAPI.create(qrPayload);
+        message.success('QR Code created successfully!');
+      }
+
       navigate('/dashboard');
     } catch (err: any) {
-      message.error(err.response?.data?.message || 'Failed to create QR code');
+      message.error(err.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} QR code`);
     } finally {
       setLoading(false);
     }
@@ -171,25 +286,30 @@ const CreateQR = () => {
       />
 
       <Content style={{ padding: '32px 50px' }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-          {/* Back Button */}
-          <Button
-            icon={<ArrowLeft size={18} />}
-            onClick={() => navigate('/dashboard')}
-            style={{ marginBottom: 24 }}
-          >
-            Back to Dashboard
-          </Button>
-
-          {/* Page Header */}
-          <div style={{ marginBottom: 32 }}>
-            <Title level={2} style={{ marginBottom: 8 }}>
-              Create QR Code
-            </Title>
-            <Text type="secondary" style={{ fontSize: 16 }}>
-              Choose a template and customize your QR code
-            </Text>
+        {fetchingQR ? (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+            <Spin size="large" tip="Loading QR Code..." />
           </div>
+        ) : (
+          <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+            {/* Back Button */}
+            <Button
+              icon={<ArrowLeft size={18} />}
+              onClick={() => navigate('/dashboard')}
+              style={{ marginBottom: 24 }}
+            >
+              Back to Dashboard
+            </Button>
+
+            {/* Page Header */}
+            <div style={{ marginBottom: 32 }}>
+              <Title level={2} style={{ marginBottom: 8 }}>
+                {isEditMode ? 'Edit QR Code' : 'Create QR Code'}
+              </Title>
+              <Text type="secondary" style={{ fontSize: 16 }}>
+                {isEditMode ? 'Update your QR code settings' : 'Choose a template and customize your QR code'}
+              </Text>
+            </div>
 
           <Row gutter={[32, 32]}>
             {/* Left Column - Templates & Form */}
@@ -204,12 +324,14 @@ const CreateQR = () => {
                 bodyStyle={{ padding: 24 }}
               >
                 <Title level={4} style={{ marginTop: 0, marginBottom: 16 }}>
-                  1. Choose QR Code Type
+                  1. Choose Template {isEditMode && <Text type="secondary" style={{ fontSize: 14, fontWeight: 400 }}>(Cannot be changed)</Text>}
                 </Title>
-                <TemplateSelection
-                  selectedTemplate={selectedTemplate}
-                  onTemplateSelect={setSelectedTemplate}
-                />
+                <div style={{ opacity: isEditMode ? 0.6 : 1, pointerEvents: isEditMode ? 'none' : 'auto' }}>
+                  <TemplateSelection
+                    selectedTemplate={selectedTemplate}
+                    onTemplateSelect={setSelectedTemplate}
+                  />
+                </div>
               </Card>
 
               {/* Content Form */}
@@ -313,10 +435,12 @@ const CreateQR = () => {
                 loading={loading}
                 onSave={handleSaveQR}
                 onDownload={handleDownload}
+                saveButtonText={isEditMode ? 'Update QR Code' : 'Save QR Code'}
               />
             </Col>
           </Row>
-        </div>
+          </div>
+        )}
       </Content>
     </Layout>
   );

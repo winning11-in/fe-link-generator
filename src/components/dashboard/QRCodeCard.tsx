@@ -1,6 +1,7 @@
 import { Card, Button, Space, Typography, Tag, message } from 'antd';
-import { BarChart3, Trash2, Download, Share2 } from 'lucide-react';
+import { BarChart3, Trash2, Download, Share2, Edit } from 'lucide-react';
 import { useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import QRCodeStyling from 'qr-code-styling';
 import type { QRCode } from '../../types';
 
@@ -13,6 +14,7 @@ interface QRCodeCardProps {
 }
 
 const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
+  const navigate = useNavigate();
   const qrCodeRef = useRef<QRCodeStyling | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const scanUrl = `${window.location.origin}/scan/${qr._id}`;
@@ -160,6 +162,12 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
         </div>
         {/* Actions */}
         <Space>
+          <Button
+            icon={<Edit size={16} />}
+            onClick={() => navigate(`/edit/${qr._id}`)}
+          >
+            Edit
+          </Button>
           <Button
             icon={<Download size={16} />}
             onClick={handleDownload}

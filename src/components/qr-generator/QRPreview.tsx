@@ -22,6 +22,7 @@ interface QRPreviewProps {
   loading: boolean;
   onSave: () => void;
   onDownload: () => void;
+  saveButtonText?: string;
 }
 
 const QRPreview = ({
@@ -38,6 +39,7 @@ const QRPreview = ({
   removeBackground,
   loading,
   onSave,
+  saveButtonText = 'Save QR Code',
 }: QRPreviewProps) => {
   const qrCodeRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -137,7 +139,7 @@ const QRPreview = ({
             height: 48,
           }}
         >
-          Save QR Code
+          {saveButtonText}
         </Button>
         
       </Space>
