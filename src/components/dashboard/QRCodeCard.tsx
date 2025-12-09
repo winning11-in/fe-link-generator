@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, Button, Space, Typography, Tag, message } from 'antd';
 import { BarChart3, Trash2, Download, Share2 } from 'lucide-react';
 import { useRef, useEffect } from 'react';
