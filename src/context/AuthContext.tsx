@@ -14,8 +14,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const storedToken = localStorage.getItem('token');
       if (storedToken) {
         try {
-          const userData = await authAPI.getProfile();
-          setUser(userData);
+          const response = await authAPI.getCurrentUser();
+          setUser(response.user);
           setToken(storedToken);
         } catch {
           localStorage.removeItem('token');

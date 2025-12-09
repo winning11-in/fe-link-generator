@@ -39,6 +39,59 @@ export const authAPI = {
     const response = await api.get('/auth/profile');
     return response.data;
   },
+
+  // Get current user (me)
+  getCurrentUser: async () => {
+    const response = await api.get('/auth/me');
+    return response.data;
+  },
+};
+
+// QR Code API
+export const qrCodeAPI = {
+  // Get all QR codes for current user
+  getAll: async () => {
+    const response = await api.get('/qrcodes');
+    return response.data;
+  },
+
+  // Get single QR code
+  getOne: async (id: string) => {
+    const response = await api.get(`/qrcodes/${id}`);
+    return response.data;
+  },
+
+  // Create new QR code
+  create: async (data: {
+    type: 'url' | 'text' | 'email' | 'wifi';
+    content: string;
+    wifiSSID?: string;
+    wifiPassword?: string;
+    wifiEncryption?: string;
+    size?: number;
+    title?: string;
+  }) => {
+    const response = await api.post('/qrcodes', data);
+    return response.data;
+  },
+
+  // Update QR code
+  update: async (id: string, data: any) => {
+    const response = await api.put(`/qrcodes/${id}`, data);
+    return response.data;
+  },
+
+  // Delete QR code
+  delete: async (id: string) => {
+    const response = await api.delete(`/qrcodes/${id}`);
+    return response.data;
+  },
+
+  // Increment scan count
+  incrementScan: async (id: string) => {
+    const response = await api.put(`/qrcodes/${id}/scan`);
+    return response.data;
+  },
 };
 
 export default api;
