@@ -1,62 +1,93 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Box, CircularProgress, Typography } from '@mui/material';
+import { Spin, Typography, Result } from 'antd';
 import { qrCodeAPI } from '../services/api';
 
+const { Title, Text } = Typography;
+
 const ScanRedirect = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const trackAndRedirect = async () => {
-      if (!id) {
-        setError('Invalid QR code');
-        return;
-      }
-
+    const handleScan = async () => {
       try {
+        if (!id) {
+          setError('Invalid QR code');
+          setLoading(false);
+          return;
+        }
+
         // Track the scan
-        await qrCodeAPI.incrementScan(id);
+        await qrCodeAPI.trackScan(id);
 
         // Get QR code details
         const response = await qrCodeAPI.getOne(id);
         const qrCode = response.qrCode;
 
-        if (qrCode && qrCode.data) {
-          // Redirect to the actual URL
-          window.location.href = qrCode.data;
-        } else {
-          setError('QR code data not found');
+        if (!qrCode || !qrCode.data) {
+          setError('QR code not found');
+          setLoading(false);
+          return;
         }
+
+        // Redirect to the actual URL
+        window.location.href = qrCode.data;
       } catch (err: any) {
+        console.error('Error tracking scan:', err);
         setError(err.response?.data?.message || 'Failed to process QR code');
+        setLoading(false);
       }
     };
 
-    trackAndRedirect();
+    handleScan();
   }, [id]);
 
-  if (error) {
+  if (loading) {
     return (
-      <Container>
-        <Box sx={{ mt: 4, textAlign: 'center' }}>
-          <Typography color="error">{error}</Typography>
-        </Box>
-      </Container>
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#f9fafb',
+        }}
+      >
+        <Spin size="large" />
+        <Title level={3} style={{ marginTop: 24 }}>
+          Redirecting...
+        </Title>
+        <Text type="secondary">Please wait while we process your request</Text>
+      </div>
     );
   }
 
-  return (
-    <Container>
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 8 }}>
-        <CircularProgress size={60} />
-        <Typography variant="h6" sx={{ mt: 3 }}>
-          Redirecting...
-        </Typography>
-      </Box>
-    </Container>
-  );
+  if (error) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#f9fafb',
+        }}
+      >
+        <Result
+          status="error"
+          title="Error"
+          subTitle={error}
+          style={{ maxWidth: 600 }}
+        />
+      </div>
+    );
+  }
+
+  return null;
 };
 
 export default ScanRedirect;

@@ -1,305 +1,255 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import {
-  Container,
-  Box,
-  Typography,
-  Paper,
-  Card,
-  CardContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  CircularProgress,
-  Chip,
-  Stack,
-} from '@mui/material';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Layout, Typography, Card, Row, Col, Spin, Table, message } from 'antd';
 import {
   BarChart,
   Bar,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from 'recharts';
-import { qrCodeAPI } from '../services/api';
-import type { Scan, Analytics } from '../types';
+import { useAuth } from '../hooks/useAuth';
+import { qrCodeAPI, scansAPI } from '../services/api';
+import Header from '../components/dashboard/Header';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
+const { Content } = Layout;
+const { Title, Text } = Typography;
+
+const COLORS = ['#6366f1', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b'];
 
 const QRAnalytics = () => {
-  const { id } = useParams<{ id: string }>();
-  const [scans, setScans] = useState<Scan[]>([]);
-  const [analytics, setAnalytics] = useState<Analytics | null>(null);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const [qrCode, setQrCode] = useState<any>(null);
+  const [scans, setScans] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!id) return;
-      try {
-        const [scansData, analyticsData] = await Promise.all([
-          qrCodeAPI.getScans(id),
-          qrCodeAPI.getAnalytics(id),
-        ]);
-        setScans(scansData.scans);
-        setAnalytics(analyticsData);
-      } catch (error) {
-        console.error('Error fetching analytics:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    if (id) {
+      fetchAnalytics();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  if (loading) {
-    return (
-      <Container>
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-          <CircularProgress />
-        </Box>
-      </Container>
-    );
-  }
+  const fetchAnalytics = async () => {
+    try {
+      setLoading(true);
+      const [qrRes, scansRes] = await Promise.all([
+        qrCodeAPI.getOne(id!),
+        scansAPI.getByQRCodeId(id!),
+      ]);
 
-  // Prepare chart data
-  const browserData = analytics?.analytics.browsers
-    ? Object.entries(analytics.analytics.browsers).map(([name, value]) => ({ name, value }))
-    : [];
+      setQrCode(qrRes.qrCode);
+      setScans(scansRes.scans || []);
+    } catch {
+      message.error('Failed to fetch analytics');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const osData = analytics?.analytics.os
-    ? Object.entries(analytics.analytics.os).map(([name, value]) => ({ name, value }))
-    : [];
+  const handleLogout = () => {
+    logout();
+    navigate('/signin');
+  };
 
-  const deviceData = analytics?.analytics.devices
-    ? Object.entries(analytics.analytics.devices).map(([name, value]) => ({ name, value }))
-    : [];
+  // Process data for charts
+  const browserData = scans.reduce((acc: any, scan: any) => {
+    const browser = scan.browser?.name || 'Unknown';
+    acc[browser] = (acc[browser] || 0) + 1;
+    return acc;
+  }, {});
 
-  const countryData = analytics?.analytics.countries
-    ? Object.entries(analytics.analytics.countries).map(([name, value]) => ({ name, value }))
-    : [];
+  const browserChartData = Object.entries(browserData).map(([name, value]) => ({
+    name,
+    value,
+  }));
 
-  const scansByDateData = analytics?.analytics.scansByDate
-    ? Object.entries(analytics.analytics.scansByDate)
-        .map(([date, count]) => ({ date, count }))
-        .sort((a, b) => a.date.localeCompare(b.date))
-    : [];
+  const osData = scans.reduce((acc: any, scan: any) => {
+    const os = scan.os?.name || 'Unknown';
+    acc[os] = (acc[os] || 0) + 1;
+    return acc;
+  }, {});
+
+  const osChartData = Object.entries(osData).map(([name, value]) => ({
+    name,
+    value,
+  }));
+
+  const deviceData = scans.reduce((acc: any, scan: any) => {
+    const device = scan.device?.type || 'Unknown';
+    acc[device] = (acc[device] || 0) + 1;
+    return acc;
+  }, {});
+
+  const deviceChartData = Object.entries(deviceData).map(([name, value]) => ({
+    name,
+    value,
+  }));
+
+  // Table columns
+  const columns = [
+    {
+      title: 'Timestamp',
+      dataIndex: 'timestamp',
+      key: 'timestamp',
+      render: (text: string) => new Date(text).toLocaleString(),
+    },
+    {
+      title: 'Browser',
+      dataIndex: 'browser',
+      key: 'browser',
+      render: (browser: any) => browser?.name || 'Unknown',
+    },
+    {
+      title: 'OS',
+      dataIndex: 'os',
+      key: 'os',
+      render: (os: any) => os?.name || 'Unknown',
+    },
+    {
+      title: 'Device',
+      dataIndex: 'device',
+      key: 'device',
+      render: (device: any) => device?.type || 'Unknown',
+    },
+    {
+      title: 'Location',
+      dataIndex: 'location',
+      key: 'location',
+      render: (location: any) =>
+        location?.city && location?.country
+          ? `${location.city}, ${location.country}`
+          : 'Unknown',
+    },
+  ];
 
   return (
-    <Container maxWidth="xl">
-      <Box sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          QR Code Analytics
-        </Typography>
+    <Layout style={{ minHeight: '100vh', background: '#f9fafb' }}>
+      <Header
+        userName={user?.name || 'User'}
+        onCreateClick={() => navigate('/dashboard')}
+        onLogout={handleLogout}
+      />
 
-        {/* Summary Cards */}
-        <Stack direction="row" spacing={2} sx={{ mb: 4, flexWrap: 'wrap' }}>
-          <Card sx={{ flex: '1 1 200px', minWidth: '200px' }}>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Total Scans
-              </Typography>
-              <Typography variant="h3">{analytics?.totalScans || 0}</Typography>
-            </CardContent>
-          </Card>
-          <Card sx={{ flex: '1 1 200px', minWidth: '200px' }}>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Unique Countries
-              </Typography>
-              <Typography variant="h3">{countryData.length}</Typography>
-            </CardContent>
-          </Card>
-          <Card sx={{ flex: '1 1 200px', minWidth: '200px' }}>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Browsers
-              </Typography>
-              <Typography variant="h3">{browserData.length}</Typography>
-            </CardContent>
-          </Card>
-          <Card sx={{ flex: '1 1 200px', minWidth: '200px' }}>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Devices
-              </Typography>
-              <Typography variant="h3">{deviceData.length}</Typography>
-            </CardContent>
-          </Card>
-        </Stack>
+      <Content style={{ padding: '32px 50px' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '80px 0' }}>
+              <Spin size="large" />
+            </div>
+          ) : (
+            <>
+              {/* Page Header */}
+              <div style={{ marginBottom: 32 }}>
+                <Title level={2} style={{ marginBottom: 8 }}>
+                  {qrCode?.title}
+                </Title>
+                <Text type="secondary" style={{ fontSize: 16 }}>
+                  Total Scans: {qrCode?.scanCount || 0}
+                </Text>
+              </div>
 
-        {/* Charts */}
-        <Stack spacing={3} sx={{ mb: 4 }}>
-          {/* Scans by Date */}
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Scans Over Time
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={scansByDateData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="count" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
-          </Paper>
-
-          {/* Browsers and OS */}
-          <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-            <Paper sx={{ p: 3, flex: 1 }}>
-              <Typography variant="h6" gutterBottom>
-                Browsers
-              </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={browserData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
+              {/* Charts */}
+              <Row gutter={[24, 24]} style={{ marginBottom: 32 }}>
+                <Col xs={24} lg={8}>
+                  <Card
+                    title="Browser Distribution"
+                    style={{ borderRadius: 12, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
                   >
-                    {browserData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </Paper>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={browserChartData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={(entry) => entry.name}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {browserChartData.map((_entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </Card>
+                </Col>
 
-            <Paper sx={{ p: 3, flex: 1 }}>
-              <Typography variant="h6" gutterBottom>
-                Operating Systems
-              </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={osData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="value" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
-            </Paper>
-          </Stack>
-
-          {/* Countries and Devices */}
-          <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-            <Paper sx={{ p: 3, flex: 1 }}>
-              <Typography variant="h6" gutterBottom>
-                Countries
-              </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={countryData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="value" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-            </Paper>
-
-            <Paper sx={{ p: 3, flex: 1 }}>
-              <Typography variant="h6" gutterBottom>
-                Device Types
-              </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={deviceData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
+                <Col xs={24} lg={8}>
+                  <Card
+                    title="Operating System"
+                    style={{ borderRadius: 12, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
                   >
-                    {deviceData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </Paper>
-          </Stack>
-        </Stack>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={osChartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="value" fill="#6366f1" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </Card>
+                </Col>
 
-        {/* Recent Scans Table */}
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Recent Scans
-          </Typography>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Time</TableCell>
-                  <TableCell>Location</TableCell>
-                  <TableCell>Device</TableCell>
-                  <TableCell>Browser</TableCell>
-                  <TableCell>OS</TableCell>
-                  <TableCell>IP</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {scans.slice(0, 20).map((scan) => (
-                  <TableRow key={scan._id}>
-                    <TableCell>
-                      {new Date(scan.createdAt).toLocaleString()}
-                    </TableCell>
-                    <TableCell>
-                      {scan.location?.city && scan.location?.country ? (
-                        <Chip
-                          label={`${scan.location.city}, ${scan.location.country}`}
-                          size="small"
-                          color="primary"
-                          variant="outlined"
-                        />
-                      ) : (
-                        'Unknown'
-                      )}
-                    </TableCell>
-                    <TableCell>{scan.device?.type || 'Unknown'}</TableCell>
-                    <TableCell>
-                      {scan.browser?.name ? `${scan.browser.name} ${scan.browser.version || ''}` : 'Unknown'}
-                    </TableCell>
-                    <TableCell>
-                      {scan.os?.name ? `${scan.os.name} ${scan.os.version || ''}` : 'Unknown'}
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                        {scan.ip}
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
-      </Box>
-    </Container>
+                <Col xs={24} lg={8}>
+                  <Card
+                    title="Device Type"
+                    style={{ borderRadius: 12, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
+                  >
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={deviceChartData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={(entry) => entry.name}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {deviceChartData.map((_entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </Card>
+                </Col>
+              </Row>
+
+              {/* Scans Table */}
+              <Card
+                title="Scan Details"
+                style={{ borderRadius: 12, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
+              >
+                <Table
+                  columns={columns}
+                  dataSource={scans}
+                  rowKey="_id"
+                  pagination={{ pageSize: 10 }}
+                />
+              </Card>
+            </>
+          )}
+        </div>
+      </Content>
+    </Layout>
   );
 };
 

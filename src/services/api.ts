@@ -101,6 +101,12 @@ export const qrCodeAPI = {
     const response = await api.get(`/qrcodes/${id}/analytics`);
     return response.data;
   },
+  
+  // Track scan (for redirect page)
+  trackScan: async (id: string) => {
+    const response = await api.post(`/qrcodes/${id}/scan`);
+    return response.data;
+  },
 };
 
 // Scans API
@@ -108,6 +114,12 @@ export const scansAPI = {
   // Get all scans for current user
   getAll: async () => {
     const response = await api.get('/scans');
+    return response.data;
+  },
+  
+  // Get scans by QR code ID
+  getByQRCodeId: async (id: string) => {
+    const response = await api.get(`/qrcodes/${id}/scans`);
     return response.data;
   },
 };

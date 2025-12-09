@@ -1,20 +1,10 @@
-import { useState } from 'react';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import {
-  Container,
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Paper,
-  Link,
-  Alert,
-  Stack,
-  Avatar,
-} from '@mui/material';
-import { LockOutlined as LockIcon } from '@mui/icons-material';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Form, Input, Button, Typography, message, Card } from 'antd';
+import { Lock, Mail } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+
+const { Title, Text } = Typography;
 
 interface SignInFormData {
   email: string;
@@ -22,133 +12,134 @@ interface SignInFormData {
 }
 
 const SignIn = () => {
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SignInFormData>();
+  const { user, login, isLoading } = useAuth();
 
-  const onSubmit = async (data: SignInFormData) => {
-    setError('');
-
-    try {
-      await login(data.email, data.password);
+  useEffect(() => {
+    if (!isLoading && user) {
       navigate('/dashboard');
-    } catch (err) {
-      const error = err as { response?: { data?: { message?: string } } };
-      setError(error.response?.data?.message || 'Sign in failed');
+    }
+  }, [user, isLoading, navigate]);
+
+  const onFinish = async (values: SignInFormData) => {
+    setLoading(true);
+    try {
+      await login(values.email, values.password);
+      navigate('/dashboard');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      message.error(err.response?.data?.message || 'Sign in failed');
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (isLoading) {
+    return null;
+  }
+
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       }}
     >
-      <Container component="main" maxWidth="xs">
-        <Paper
-          elevation={24}
-          sx={{
-            p: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            borderRadius: 3,
+      <div style={{ width: '100%', maxWidth: 400, margin: '0 auto', padding: '0 20px' }}>
+        <Card
+          style={{
+            borderRadius: 16,
+            boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
           }}
+          bodyStyle={{ padding: 48 }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'primary.main', width: 56, height: 56 }}>
-            <LockIcon fontSize="large" />
-          </Avatar>
-          
-          <Typography component="h1" variant="h4" fontWeight="bold" gutterBottom>
-            Welcome Back
-          </Typography>
-          
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            Sign in to continue to QR Generator
-          </Typography>
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <div
+              style={{
+                width: 56,
+                height: 56,
+                background: '#6366f1',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 16px',
+              }}
+            >
+              <Lock size={28} color="white" />
+            </div>
+            <Title level={2} style={{ marginBottom: 8 }}>
+              Welcome Back
+            </Title>
+            <Text type="secondary">Sign in to continue to QR Generator</Text>
+          </div>
 
-          {error && (
-            <Alert severity="error" sx={{ mb: 2, width: '100%' }}>
-              {error}
-            </Alert>
-          )}
+          <Form
+            name="signin"
+            onFinish={onFinish}
+            layout="vertical"
+            size="large"
+            requiredMark={false}
+          >
+            <Form.Item
+              name="email"
+              rules={[
+                { required: true, message: 'Email is required' },
+                { type: 'email', message: 'Invalid email address' },
+              ]}
+            >
+              <Input
+                prefix={<Mail size={18} />}
+                placeholder="Email Address"
+              />
+            </Form.Item>
 
-          <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
-            <Stack spacing={2.5}>
-              <TextField
-                fullWidth
-                id="email"
-                label="Email Address"
-                autoComplete="email"
-                autoFocus
-                {...register('email', {
-                  required: 'Email is required',
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'Invalid email address'
-                  }
-                })}
-                error={!!errors.email}
-                helperText={errors.email?.message}
+            <Form.Item
+              name="password"
+              rules={[
+                { required: true, message: 'Password is required' },
+                { min: 6, message: 'Password must be at least 6 characters' },
+              ]}
+            >
+              <Input.Password
+                prefix={<Lock size={18} />}
+                placeholder="Password"
               />
-              
-              <TextField
-                fullWidth
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                {...register('password', {
-                  required: 'Password is required',
-                  minLength: {
-                    value: 6,
-                    message: 'Password must be at least 6 characters'
-                  }
-                })}
-                error={!!errors.password}
-                helperText={errors.password?.message}
-              />
-              
+            </Form.Item>
+
+            <Form.Item style={{ marginBottom: 16 }}>
               <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                disabled={isSubmitting}
-                sx={{
-                  mt: 1,
-                  py: 1.5,
-                  textTransform: 'none',
-                  fontSize: '1rem',
+                type="primary"
+                htmlType="submit"
+                block
+                loading={loading}
+                style={{
+                  height: 48,
+                  background: '#6366f1',
+                  borderColor: '#6366f1',
                   fontWeight: 600,
+                  fontSize: 16,
                 }}
               >
-                {isSubmitting ? 'Signing In...' : 'Sign In'}
+                Sign In
               </Button>
-            </Stack>
+            </Form.Item>
 
-            <Box sx={{ mt: 3, textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">
+            <div style={{ textAlign: 'center' }}>
+              <Text type="secondary">
                 Don't have an account?{' '}
-                <Link
-                  component={RouterLink}
-                  to="/signup"
-                  underline="hover"
-                  fontWeight="600"
-                  sx={{ color: 'primary.main' }}
-                >
+                <Link to="/signup" style={{ color: '#6366f1', fontWeight: 600 }}>
                   Sign Up
                 </Link>
-              </Typography>
-            </Box>
-          </Box>
-        </Paper>
-      </Container>
-    </Box>
+              </Text>
+            </div>
+          </Form>
+        </Card>
+      </div>
+    </div>
   );
 };
 
