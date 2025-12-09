@@ -63,13 +63,9 @@ export const qrCodeAPI = {
 
   // Create new QR code
   create: async (data: {
-    type: 'url' | 'text' | 'email' | 'wifi';
-    content: string;
-    wifiSSID?: string;
-    wifiPassword?: string;
-    wifiEncryption?: string;
-    size?: number;
-    title?: string;
+    type: 'url' | 'text' | 'email' | 'phone';
+    data: string;
+    title: string;
   }) => {
     const response = await api.post('/qrcodes', data);
     return response.data;
@@ -89,7 +85,28 @@ export const qrCodeAPI = {
 
   // Increment scan count
   incrementScan: async (id: string) => {
-    const response = await api.put(`/qrcodes/${id}/scan`);
+    const response = await api.post(`/qrcodes/${id}/scan`);
+    return response.data;
+  },
+
+  // Get scans for a QR code
+  getScans: async (id: string) => {
+    const response = await api.get(`/qrcodes/${id}/scans`);
+    return response.data;
+  },
+
+  // Get analytics for a QR code
+  getAnalytics: async (id: string) => {
+    const response = await api.get(`/qrcodes/${id}/analytics`);
+    return response.data;
+  },
+};
+
+// Scans API
+export const scansAPI = {
+  // Get all scans for current user
+  getAll: async () => {
+    const response = await api.get('/scans');
     return response.data;
   },
 };

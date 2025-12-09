@@ -4,6 +4,8 @@ import { AuthProvider } from './context/AuthContext';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
+import QRAnalytics from './pages/QRAnalytics';
+import ScanRedirect from './pages/ScanRedirect';
 
 const theme = createTheme({
   palette: {
@@ -27,6 +29,8 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/qr/:id/analytics" element={<QRAnalytics />} />
+            <Route path="/scan/:id" element={<ScanRedirect />} />
           </Routes>
         </Router>
       </AuthProvider>
