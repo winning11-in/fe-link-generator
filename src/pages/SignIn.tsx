@@ -1,10 +1,40 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Form, Input, Button, Typography, message } from 'antd';
-import { Mail, Lock, QrCode, Zap, BarChart3, Shield } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
-
-const { Title, Text } = Typography;
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { Form, Input, message } from "antd";
+import { Mail, Lock, QrCode, Zap, BarChart3, Shield } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
+// import { GoogleIcon, FacebookIcon, AppleIcon } from "../components/auth/Icons";
+import {
+  AuthContainer,
+  BrandingColumn,
+  DecorativeCircle,
+  BrandingContent,
+  BrandHeader,
+  BrandTitle,
+  BrandHeadline,
+  BrandDescription,
+  FeaturesList,
+  FeatureItem,
+  FeatureIcon,
+  FeatureContent,
+  FeatureTitle,
+  FeatureDescription,
+  FormColumn,
+  FormCard,
+  IconContainer,
+  FormHeader,
+  FormTitle,
+  FormSubtitle,
+  ForgotPasswordLink,
+  SubmitButton,
+  // Divider,
+  // DividerLine,
+  // DividerText,
+  // SocialButtonsContainer,
+  // SocialButton,
+  FooterText,
+  FooterLink,
+} from "../components/auth/AuthStyles";
 
 interface SignInFormData {
   email: string;
@@ -18,7 +48,7 @@ const SignIn = () => {
 
   useEffect(() => {
     if (!isLoading && user) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     }
   }, [user, isLoading, navigate]);
 
@@ -26,9 +56,9 @@ const SignIn = () => {
     setLoading(true);
     try {
       await login(values.email, values.password);
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err: any) {
-      message.error(err.response?.data?.message || 'Sign in failed');
+      message.error(err.response?.data?.message || "Sign in failed");
     } finally {
       setLoading(false);
     }
@@ -38,144 +68,78 @@ const SignIn = () => {
     return null;
   }
 
+  const features = [
+    {
+      icon: Zap,
+      title: "Instant Generation",
+      desc: "Create QR codes in seconds",
+    },
+    {
+      icon: BarChart3,
+      title: "Real-time Analytics",
+      desc: "Track scans and user behavior",
+    },
+    {
+      icon: Shield,
+      title: "Secure & Reliable",
+      desc: "Enterprise-grade security",
+    },
+  ];
+
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', background: '#f8fafc' }}>
+    <AuthContainer>
       {/* Left Column - Branding */}
-      <div style={{
-        flex: 1,
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        padding: '60px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
-        {/* Decorative Elements */}
-        <div style={{
-          position: 'absolute',
-          width: '400px',
-          height: '400px',
-          background: 'rgba(255, 255, 255, 0.1)',
-          borderRadius: '50%',
-          top: '-100px',
-          right: '-100px',
-          backdropFilter: 'blur(10px)',
-        }} />
-        <div style={{
-          position: 'absolute',
-          width: '300px',
-          height: '300px',
-          background: 'rgba(255, 255, 255, 0.08)',
-          borderRadius: '50%',
-          bottom: '-80px',
-          left: '-80px',
-          backdropFilter: 'blur(10px)',
-        }} />
+      <BrandingColumn>
+        <DecorativeCircle size="400px" top="-100px" right="-100px" />
+        <DecorativeCircle size="300px" bottom="-80px" left="-80px" />
 
-        {/* Content */}
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: '500px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px' }}>
+        <BrandingContent>
+          <BrandHeader>
             <QrCode size={48} color="#fff" strokeWidth={2} />
-            <Title level={2} style={{ 
-              margin: '0 0 0 16px', 
-              color: '#fff',
-              fontSize: '32px',
-              fontWeight: 700,
-            }}>
-              QR Generator
-            </Title>
-          </div>
+            <BrandTitle>QR Generator</BrandTitle>
+          </BrandHeader>
 
-          <Title level={3} style={{ 
-            color: '#fff', 
-            marginBottom: '24px',
-            fontSize: '28px',
-            fontWeight: 300,
-            lineHeight: 1.4,
-          }}>
+          <BrandHeadline>
             Create, Track & Manage Your QR Codes with Ease
-          </Title>
+          </BrandHeadline>
 
-          <Text style={{ 
-            color: 'rgba(255, 255, 255, 0.9)', 
-            fontSize: '16px',
-            display: 'block',
-            marginBottom: '48px',
-            lineHeight: 1.6,
-          }}>
-            Professional QR code generation platform with powerful analytics and customization options.
-          </Text>
+          <BrandDescription>
+            Professional QR code generation platform with powerful analytics and
+            customization options.
+          </BrandDescription>
 
-          {/* Features */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {[
-              { icon: Zap, title: 'Instant Generation', desc: 'Create QR codes in seconds' },
-              { icon: BarChart3, title: 'Real-time Analytics', desc: 'Track scans and user behavior' },
-              { icon: Shield, title: 'Secure & Reliable', desc: 'Enterprise-grade security' },
-            ].map((feature, idx) => (
-              <div key={idx} style={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  borderRadius: '12px',
-                  padding: '12px',
-                  backdropFilter: 'blur(10px)',
-                }}>
+          <FeaturesList>
+            {features.map((feature, idx) => (
+              <FeatureItem key={idx}>
+                <FeatureIcon>
                   <feature.icon size={24} color="#fff" strokeWidth={2} />
-                </div>
-                <div>
-                  <Text style={{ 
-                    color: '#fff', 
-                    fontSize: '16px', 
-                    fontWeight: 600,
-                    display: 'block',
-                    marginBottom: '4px',
-                  }}>
-                    {feature.title}
-                  </Text>
-                  <Text style={{ 
-                    color: 'rgba(255, 255, 255, 0.8)', 
-                    fontSize: '14px',
-                  }}>
-                    {feature.desc}
-                  </Text>
-                </div>
-              </div>
+                </FeatureIcon>
+                <FeatureContent>
+                  <FeatureTitle>{feature.title}</FeatureTitle>
+                  <FeatureDescription>{feature.desc}</FeatureDescription>
+                </FeatureContent>
+              </FeatureItem>
             ))}
-          </div>
-        </div>
-      </div>
+          </FeaturesList>
+        </BrandingContent>
+      </BrandingColumn>
 
       {/* Right Column - Form */}
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '40px',
-        background: '#ffffff',
-      }}>
-        <div style={{ width: '100%', maxWidth: '440px' }}>
-          {/* Header */}
-          <div style={{ marginBottom: '48px' }}>
-            <Title level={2} style={{ 
-              margin: 0, 
-              color: '#1e293b',
-              fontSize: '32px',
-              fontWeight: 700,
-              marginBottom: '8px',
-            }}>
-              Welcome Back
-            </Title>
-            <Text style={{ 
-              color: '#64748b',
-              fontSize: '16px',
-            }}>
-              Sign in to continue to your account
-            </Text>
-          </div>
+      <FormColumn>
+        <FormCard>
+          <IconContainer>
+            <Mail size={28} color="#1e293b" strokeWidth={2} />
+          </IconContainer>
 
-          {/* Form */}
+          <FormHeader>
+            <FormTitle>Sign in with email</FormTitle>
+            <FormSubtitle>
+              Make a new doc to bring your words, data,
+              <br />
+              and teams together. For free
+            </FormSubtitle>
+          </FormHeader>
+
           <Form
             name="signin"
             onFinish={onFinish}
@@ -183,115 +147,85 @@ const SignIn = () => {
             requiredMark={false}
           >
             <Form.Item
-              label={<span style={{ color: '#334155', fontWeight: 500, fontSize: '14px' }}>Email Address</span>}
               name="email"
               rules={[
-                { required: true, message: 'Email is required' },
-                { type: 'email', message: 'Invalid email address' },
+                { required: true, message: "Email is required" },
+                { type: "email", message: "Invalid email address" },
               ]}
             >
               <Input
-                prefix={<Mail size={18} style={{ color: '#94a3b8' }} />}
-                placeholder="Enter your email"
+                prefix={<Mail size={16} style={{ color: "#94a3b8" }} />}
+                placeholder="Email"
                 size="large"
                 style={{
-                  borderRadius: '8px',
-                  height: '48px',
-                  fontSize: '15px',
+                  borderRadius: "10px",
+                  height: "48px",
+                  fontSize: "14px",
+                  background: "#f8f9fa",
+                  border: "1px solid #e2e8f0",
                 }}
               />
             </Form.Item>
 
             <Form.Item
-              label={<span style={{ color: '#334155', fontWeight: 500, fontSize: '14px' }}>Password</span>}
               name="password"
               rules={[
-                { required: true, message: 'Password is required' },
-                { min: 6, message: 'Password must be at least 6 characters' },
+                { required: true, message: "Password is required" },
+                { min: 6, message: "Password must be at least 6 characters" },
               ]}
+              style={{ marginBottom: "12px" }}
             >
               <Input.Password
-                prefix={<Lock size={18} style={{ color: '#94a3b8' }} />}
-                placeholder="Enter your password"
+                prefix={<Lock size={16} style={{ color: "#94a3b8" }} />}
+                placeholder="Password"
                 size="large"
                 style={{
-                  borderRadius: '8px',
-                  height: '48px',
-                  fontSize: '15px',
+                  borderRadius: "10px",
+                  height: "48px",
+                  fontSize: "14px",
+                  background: "#f8f9fa",
+                  border: "1px solid #e2e8f0",
                 }}
               />
             </Form.Item>
 
-            <div style={{ 
-              textAlign: 'right', 
-              marginBottom: '24px',
-            }}>
-              <Text style={{ 
-                color: '#667eea',
-                fontSize: '14px',
-                cursor: 'pointer',
-                fontWeight: 500,
-              }}>
-                Forgot Password?
-              </Text>
+            <div style={{ textAlign: "right", marginBottom: "24px" }}>
+              <ForgotPasswordLink>Forgot password?</ForgotPasswordLink>
             </div>
 
-            <Form.Item style={{ marginBottom: '24px' }}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                block
-                loading={loading}
-                size="large"
-                style={{
-                  height: '48px',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  fontSize: '16px',
-                  boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
-                }}
-              >
-                Sign In
-              </Button>
+            <Form.Item style={{ marginBottom: "20px" }}>
+              <SubmitButton type="submit" loading={loading}>
+                Get Started
+              </SubmitButton>
             </Form.Item>
 
-            <div style={{ 
-              textAlign: 'center',
-              paddingTop: '24px',
-              borderTop: '1px solid #e2e8f0',
-            }}>
-              <Text style={{ 
-                color: '#64748b',
-                fontSize: '15px',
-              }}>
-                Don't have an account?{' '}
-                <Link 
-                  to="/signup" 
-                  style={{ 
-                    color: '#667eea', 
-                    fontWeight: 600,
-                    textDecoration: 'none',
-                  }}
-                >
-                  Sign Up
-                </Link>
-              </Text>
-            </div>
-          </Form>
-        </div>
-      </div>
+            {/* <Divider>
+              <DividerLine />
+              <DividerText>Or sign in with</DividerText>
+            </Divider> */}
 
-      {/* Responsive Design */}
-      <style>{`
-        @media (max-width: 1024px) {
-          .ant-row {
-            flex-direction: column;
-          }
-        }
-      `}</style>
-    </div>
+            {/* <SocialButtonsContainer>
+              <SocialButton type="button">
+                <GoogleIcon />
+              </SocialButton>
+              <SocialButton type="button">
+                <FacebookIcon />
+              </SocialButton>
+              <SocialButton type="button">
+                <AppleIcon />
+              </SocialButton>
+            </SocialButtonsContainer> */}
+
+            <FooterText>
+              Don't have an account?{" "}
+              <Link to="/signup" style={{ textDecoration: "none" }}>
+                <FooterLink>Sign Up</FooterLink>
+              </Link>
+            </FooterText>
+          </Form>
+        </FormCard>
+      </FormColumn>
+    </AuthContainer>
   );
 };
 
