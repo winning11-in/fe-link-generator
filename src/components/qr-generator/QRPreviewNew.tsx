@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { Card, Typography } from "antd";
+import { Card, Typography} from "antd";
 import QRCodeStyling from "qr-code-styling";
 import type { GradientColor, FrameOptions } from "../../types";
 
@@ -32,6 +32,7 @@ interface QRPreviewProps {
   loading: boolean;
   onSave: () => void;
   saveButtonText?: string;
+  downloadFormat?: 'png' | 'svg' | 'jpeg';
 }
 
 const QRPreviewNew = ({
@@ -42,6 +43,7 @@ const QRPreviewNew = ({
   bgColorGradient,
   bgImage,
   bgImageOpacity,
+  qrSize,
   errorLevel,
   dotStyle,
   cornerSquareStyle,
@@ -56,10 +58,13 @@ const QRPreviewNew = ({
   shadowColor,
   shadowBlur,
   borderRadius,
-}: QRPreviewProps) => {
+  
+ }: QRPreviewProps) => {
   const qrCodeRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+ 
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -115,8 +120,8 @@ const QRPreviewNew = ({
     }
 
     const qrCode = new QRCodeStyling({
-      width: 280,
-      height: 280,
+      width: qrSize,
+      height: qrSize,
       data: qrData || "https://example.com",
       margin: margin,
       dotsOptions,
@@ -194,6 +199,7 @@ const QRPreviewNew = ({
     bgColorGradient,
     bgImage,
     bgImageOpacity,
+    qrSize,
     dotStyle,
     cornerSquareStyle,
     cornerDotStyle,

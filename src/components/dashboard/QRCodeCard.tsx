@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import QRCodeStyling from "qr-code-styling";
 import type { QRCode } from "../../types";
+import { useQRDownload } from "../../hooks/useQRDownload";
 
 const { Text, Title } = Typography;
 
@@ -18,6 +19,9 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
   const qrCodeRef = useRef<QRCodeStyling | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const scanUrl = `${window.location.origin}/scan/${qr._id}`;
+  
+  // Use download hook
+  const { handleDownload } = useQRDownload({ qr, scanUrl });
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -32,23 +36,69 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
       H: "H",
     };
 
+    // Prepare dots options with gradient support
+    const dotsOptions: any = {
+      type: customization?.dotStyle || "square",
+    };
+
+    const qrColorGradient = customization?.qrColorGradient;
+    if (qrColorGradient?.type === "solid") {
+      dotsOptions.color = customization?.qrColor || "#000000";
+    } else if (qrColorGradient?.type === "linear" && qrColorGradient.gradient) {
+      dotsOptions.gradient = {
+        type: "linear",
+        rotation: (qrColorGradient.gradient.rotation || 0) * (Math.PI / 180),
+        colorStops: qrColorGradient.gradient.colorStops,
+      };
+    } else if (qrColorGradient?.type === "radial" && qrColorGradient.gradient) {
+      dotsOptions.gradient = {
+        type: "radial",
+        colorStops: qrColorGradient.gradient.colorStops,
+      };
+    } else {
+      dotsOptions.color = customization?.qrColor || "#000000";
+    }
+
+    // Prepare background options
+    const backgroundOptions: any = {};
+    const bgColorGradient = customization?.bgColorGradient;
+    
+    if (customization?.bgImage) {
+      backgroundOptions.color = "transparent";
+    } else if (bgColorGradient?.type === "solid") {
+      backgroundOptions.color = customization?.bgColor || "#ffffff";
+    } else if (bgColorGradient?.type === "linear" && bgColorGradient.gradient) {
+      backgroundOptions.gradient = {
+        type: "linear",
+        rotation: (bgColorGradient.gradient.rotation || 0) * (Math.PI / 180),
+        colorStops: bgColorGradient.gradient.colorStops,
+      };
+    } else if (bgColorGradient?.type === "radial" && bgColorGradient.gradient) {
+      backgroundOptions.gradient = {
+        type: "radial",
+        colorStops: bgColorGradient.gradient.colorStops,
+      };
+    } else {
+      backgroundOptions.color = customization?.bgColor || "#ffffff";
+    }
+
+    const cornerColor = qrColorGradient?.type === "solid" 
+      ? customization?.qrColor || "#000000"
+      : qrColorGradient?.gradient?.colorStops?.[0]?.color || customization?.qrColor || "#000000";
+
     const qrCodeConfig: any = {
       width: 120,
       height: 120,
       data: scanUrl,
-      dotsOptions: {
-        color: customization?.qrColor || "#000000",
-        type: customization?.dotStyle || "square",
-      },
-      backgroundOptions: {
-        color: customization?.bgColor || "#ffffff",
-      },
+      margin: customization?.margin || 0,
+      dotsOptions,
+      backgroundOptions,
       cornersSquareOptions: {
-        color: customization?.qrColor || "#000000",
+        color: cornerColor,
         type: customization?.cornerSquareStyle || "square",
       },
       cornersDotOptions: {
-        color: customization?.qrColor || "#000000",
+        color: cornerColor,
         type: customization?.cornerDotStyle || "square",
       },
       qrOptions: {
@@ -83,16 +133,6 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
       }
     };
   }, [qr, scanUrl]);
-
-  const handleDownload = () => {
-    if (!qrCodeRef.current) return;
-
-    qrCodeRef.current.download({
-      name: qr.title.replace(/\s+/g, "-") + "-qr",
-      extension: "png",
-    });
-    message.success("QR Code downloaded!");
-  };
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -151,26 +191,10 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <div ref={containerRef} style={{ width: 120, height: 120 }} />
+          <div ref={containerRef} style={{ width: 120, height: 120, display: 'flex', justifyContent: 'center', alignItems: 'center' }} />
         </div>
 
-        {/* Status Badge */}
-        {/* {qr.isActive && (
-          <div style={{ 
-            position: 'absolute', 
-            top: 12, 
-            right: 12,
-            background: '#52c41a',
-            color: '#fff',
-            fontSize: 11,
-            fontWeight: 600,
-            padding: '4px 10px',
-            borderRadius: 12,
-            boxShadow: '0 2px 8px rgba(82, 196, 26, 0.3)',
-          }}>
-            ACTIVE
-          </div>
-        )} */}
+        
       </div>
 
       {/* Content */}
