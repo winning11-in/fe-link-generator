@@ -151,8 +151,8 @@ export const useQRManager = ({
         : qrColorGradient?.gradient?.colorStops?.[0]?.color || customization.qrColor || "#000000";
 
       const qrConfig: any = {
-        width: 300,
-        height: 300,
+        width: 512,
+        height: 512,
         data: data,
         margin: customization.margin ?? 10,
         dotsOptions,
@@ -202,7 +202,7 @@ export const useQRManager = ({
                 ctx.globalCompositeOperation = "source-over";
                 ctx.globalAlpha = 1;
                 
-                const previewDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                const previewDataUrl = canvas.toDataURL('image/jpeg', 0.85);
                 document.body.removeChild(tempContainer);
                 resolve(previewDataUrl);
               };
@@ -210,7 +210,7 @@ export const useQRManager = ({
               img.src = customization.bgImage;
             }
           } else {
-            const previewDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+            const previewDataUrl = canvas.toDataURL('image/jpeg', 0.85);
             document.body.removeChild(tempContainer);
             resolve(previewDataUrl);
           }
