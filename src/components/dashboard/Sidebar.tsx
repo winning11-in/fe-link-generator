@@ -2,9 +2,79 @@ import { Layout, Menu, Button, Avatar, Typography } from 'antd';
 import { QrCode, BarChart3, LogOut, HelpCircle, Mail, MessageSquare } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import styled from 'styled-components';
 
 const { Sider } = Layout;
 const { Text } = Typography;
+
+const StyledSider = styled(Sider)`
+  background: #fff;
+  border-right: 1px solid #e8e8e8;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  overflow: auto;
+`;
+
+const SidebarContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+const UserSection = styled.div`
+  padding: 16px 20px;
+  border-bottom: 1px solid #e8e8e8;
+`;
+
+const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`;
+
+const UserDetails = styled.div`
+  flex: 1;
+  overflow: hidden;
+`;
+
+const MenuSection = styled.div`
+  flex: 1;
+  padding: 8px 0;
+`;
+
+const StyledMenu = styled(Menu)`
+  border: none;
+  background: transparent;
+
+  .ant-menu-item {
+    margin-bottom: 16px;
+  }
+
+  .ant-menu-item:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const LogoutSection = styled.div`
+  padding: 16px 20px;
+  border-top: 1px solid #e8e8e8;
+  margin-top: auto;
+`;
+
+const StyledAvatar = styled(Avatar)`
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-size: 16px;
+  font-weight: 600;
+`;
+
+const StyledLogoutButton = styled(Button)`
+  font-weight: 600;
+  height: 44px;
+  border-radius: 8px;
+`;
 
 interface SidebarProps {
   userName: string;
@@ -51,89 +121,45 @@ const Sidebar = ({ userName, onLogout }: SidebarProps) => {
   ];
 
   return (
-    <Sider
-      width={240}
-      style={{
-        background: '#fff',
-        borderRight: '1px solid #e8e8e8',
-        height: '100vh',
-        position: 'fixed',
-        left: 0,
-        top: 0,
-        bottom: 0,
-        overflow: 'auto',
-      }}
-    >
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-      }}>
-        
-
-        <div style={{
-          padding: '16px 20px',
-          borderBottom: '1px solid #e8e8e8',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Avatar 
-              style={{ 
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                fontSize: 16,
-                fontWeight: 600,
-              }}
-              size={40}
-            >
+    <StyledSider width={240}>
+      <SidebarContainer>
+        <UserSection>
+          <UserInfo>
+            <StyledAvatar size={40}>
               {userName.charAt(0).toUpperCase()}
-            </Avatar>
-            <div style={{ flex: 1, overflow: 'hidden' }}>
+            </StyledAvatar>
+            <UserDetails>
               <Text strong style={{ display: 'block', fontSize: 14, color: '#1a1a1a' }}>
                 {userName}
               </Text>
               <Text type="secondary" style={{ fontSize: 12 }}>
                 Premium User
               </Text>
-            </div>
-          </div>
-        </div>
- 
+            </UserDetails>
+          </UserInfo>
+        </UserSection>
 
-        {/* Navigation Menu */}
-        <div style={{ flex: 1, padding: '8px 0' }}>
-          <Menu
+        <MenuSection>
+          <StyledMenu
             mode="inline"
             selectedKeys={[location.pathname]}
             items={menuItems}
-            style={{
-              border: 'none',
-              background: 'transparent',
-            }}
           />
-        </div>
+        </MenuSection>
 
-        {/* Logout Button at Bottom */}
-        <div style={{
-          padding: '16px 20px',
-          borderTop: '1px solid #e8e8e8',
-          marginTop: 'auto',
-        }}>
-          <Button
+        <LogoutSection>
+          <StyledLogoutButton
             danger
             icon={<LogOut size={18} />}
             onClick={onLogout}
             block
             size="large"
-            style={{
-              fontWeight: 600,
-              height: 44,
-              borderRadius: 8,
-            }}
           >
             Logout
-          </Button>
-        </div>
-      </div>
-    </Sider>
+          </StyledLogoutButton>
+        </LogoutSection>
+      </SidebarContainer>
+    </StyledSider>
   );
 };
 
