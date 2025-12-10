@@ -137,21 +137,24 @@ const CreateQR = () => {
             break;
           }
           case 'upi': {
-            const upiMatch = qr.data.match(/upi:\/\/pay\?pa=([^&]+)(?:&pn=([^&]*))?(?:&am=([^&]*))?(?:&tn=([^&]*))?/);
-            if (upiMatch) {
-              setUpiID(upiMatch[1]);
-              if (upiMatch[2]) setUpiName(decodeURIComponent(upiMatch[2]));
-              if (upiMatch[3]) setUpiAmount(upiMatch[3]);
-              if (upiMatch[4]) setUpiNote(decodeURIComponent(upiMatch[4]));
-            }
+            const [, queryString] = qr.data.split('?');
+            if (!queryString) break;
+            const params = new URLSearchParams(queryString);
+            const pa = params.get('pa');
+            if (pa) setUpiID(pa);
+            const pn = params.get('pn');
+            if (pn) setUpiName(pn);
+            const am = params.get('am');
+            if (am) setUpiAmount(am);
+            const tn = params.get('tn');
+            if (tn) setUpiNote(tn);
             break;
           }
         }
 
         message.success('QR Code loaded for editing');
       } catch (err: any) {
-        console.error('Load QR Error:', err); // Debug log
-        message.error(err.response?.data?.message || err.message || 'Failed to load QR code');
+         message.error(err.response?.data?.message || err.message || 'Failed to load QR code');
         navigate('/dashboard');
       } finally {
         setFetchingQR(false);
@@ -178,12 +181,15 @@ const CreateQR = () => {
       case 'location':
         return `geo:${latitude},${longitude}`;
       case 'upi': {
-        // UPI payment URL format: upi://pay?pa=<UPI_ID>&pn=<Name>&am=<Amount>&tn=<Note>
-        let upiUrl = `upi://pay?pa=${upiID}`;
-        if (upiName) upiUrl += `&pn=${encodeURIComponent(upiName)}`;
-        if (upiAmount) upiUrl += `&am=${upiAmount}`;
-        if (upiNote) upiUrl += `&tn=${encodeURIComponent(upiNote)}`;
-        return upiUrl;
+        const trimmedUpiId = upiID.trim();
+        if (!trimmedUpiId) return '';
+        const params = new URLSearchParams();
+        params.set('pa', trimmedUpiId);
+        if (upiName.trim()) params.set('pn', upiName.trim());
+        if (upiAmount.trim()) params.set('am', upiAmount.trim());
+        params.set('cu', 'INR');
+        if (upiNote.trim()) params.set('tn', upiNote.trim());
+        return `upi://pay?${params.toString()}`;
       }
       default:
         return qrData;

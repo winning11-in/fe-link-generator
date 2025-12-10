@@ -10,6 +10,61 @@ import UniqueVisitorsChart from '../components/analytics/UniqueVisitorsChart';
 
 const { Title, Text } = Typography;
 
+const formatISODateToDisplay = (isoDate: string) => {
+  const [year, month, day] = isoDate.split('-');
+  if (!year || !month || !day) return isoDate;
+  return `${day}/${month}/${year}`;
+};
+
+const normalizeToISODate = (timestamp?: string) => {
+  if (!timestamp) return null;
+  const parsed = new Date(timestamp);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return parsed.toISOString().split('T')[0];
+};
+
+const buildDailySeries = (scans: any[]) => {
+  const dailyMap = new Map<string, { scanCount: number; ips: Set<string> }>();
+
+  scans.forEach((scan) => {
+    const ts = scan?.timestamp || scan?.createdAt || scan?.updatedAt;
+    const isoDate = normalizeToISODate(ts);
+    if (!isoDate) return;
+
+    if (!dailyMap.has(isoDate)) {
+      dailyMap.set(isoDate, { scanCount: 0, ips: new Set<string>() });
+    }
+
+    const entry = dailyMap.get(isoDate)!;
+    entry.scanCount += 1;
+    if (scan?.ip) {
+      entry.ips.add(scan.ip);
+    }
+  });
+
+  const sortedDates = Array.from(dailyMap.keys()).sort(
+    (a, b) => new Date(a).getTime() - new Date(b).getTime()
+  );
+
+  const scansOverTimeData = sortedDates.map((date) => {
+    const entry = dailyMap.get(date)!;
+    return {
+      name: formatISODateToDisplay(date),
+      scans: entry.scanCount,
+    };
+  });
+
+  const uniqueVisitorsData = sortedDates.map((date) => {
+    const entry = dailyMap.get(date)!;
+    return {
+      name: formatISODateToDisplay(date),
+      visitors: entry.ips.size,
+    };
+  });
+
+  return { scansOverTimeData, uniqueVisitorsData };
+};
+
 const Analytics = () => {
   const [stats, setStats] = useState({
     totalScans: 0,
@@ -56,26 +111,8 @@ const Analytics = () => {
         engagementRate: parseFloat(engagementRate),
       });
 
-      // Process scans over time (last 7 days)
-      const last7Days = Array.from({ length: 7 }, (_, i) => {
-        const date = new Date();
-        date.setDate(date.getDate() - (6 - i));
-        return date.toLocaleDateString('en-US', { weekday: 'short' });
-      });
-
-      const scansByDay = last7Days.map((day, index) => {
-        const date = new Date();
-        date.setDate(date.getDate() - (6 - index));
-        const dayScans = scans.filter((scan: any) => {
-          const scanDate = new Date(scan.timestamp);
-          return scanDate.toDateString() === date.toDateString();
-        });
-        return {
-          name: day,
-          scans: dayScans.length,
-        };
-      });
-      setScansOverTime(scansByDay);
+      const { scansOverTimeData, uniqueVisitorsData } = buildDailySeries(scans);
+      setScansOverTime(scansOverTimeData);
 
       // Process device breakdown
       const deviceCounts: any = {
@@ -115,20 +152,7 @@ const Analytics = () => {
       ]);
 
       // Process unique visitors over time
-      const visitorsByDay = last7Days.map((day, index) => {
-        const date = new Date();
-        date.setDate(date.getDate() - (6 - index));
-        const dayScans = scans.filter((scan: any) => {
-          const scanDate = new Date(scan.timestamp);
-          return scanDate.toDateString() === date.toDateString();
-        });
-        const uniqueIPs = new Set(dayScans.map((scan: any) => scan.ip));
-        return {
-          name: day,
-          visitors: uniqueIPs.size,
-        };
-      });
-      setUniqueVisitorsData(visitorsByDay);
+      setUniqueVisitorsData(uniqueVisitorsData);
     } catch {
       message.error('Failed to fetch analytics');
     } finally {

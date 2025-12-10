@@ -29,7 +29,7 @@ const ScansOverTimeChart = ({ data }: ScansOverTimeChartProps) => {
         <Title level={4} style={{ marginBottom: 4, marginTop: 0 }}>
           Scans Over Time
         </Title>
-        <Text type="secondary">Last 7 days performance</Text>
+        <Text type="secondary">Daily scan performance</Text>
       </div>
       <ResponsiveContainer width="100%" height={300}>
         <AreaChart data={data}>
