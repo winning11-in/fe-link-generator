@@ -1,10 +1,22 @@
 import type { GradientColor, FrameOptions } from '../../types';
+import { 
+  Square, 
+  Sparkles, 
+  Briefcase, 
+  Waves, 
+  Sunset, 
+  TreePine, 
+  Circle, 
+  Zap, 
+  Building2, 
+  Candy 
+} from 'lucide-react';
 
 export interface DesignTemplate {
   id: string;
   name: string;
   category: 'business' | 'creative' | 'minimal' | 'vibrant';
-  preview: string;
+  preview: any;
   settings: {
     qrColor: string;
     qrColorGradient: GradientColor;
@@ -27,7 +39,7 @@ export const designTemplates: DesignTemplate[] = [
     id: 'classic-black',
     name: 'Classic Black',
     category: 'minimal',
-    preview: '🔲',
+    preview: Square,
     settings: {
       qrColor: '#000000',
       qrColorGradient: { type: 'solid', color: '#000000' },
@@ -48,7 +60,7 @@ export const designTemplates: DesignTemplate[] = [
     id: 'modern-gradient',
     name: 'Modern Gradient',
     category: 'vibrant',
-    preview: '🌈',
+    preview: Sparkles,
     settings: {
       qrColor: '#6366f1',
       qrColorGradient: {
@@ -78,7 +90,7 @@ export const designTemplates: DesignTemplate[] = [
     id: 'business-professional',
     name: 'Business Professional',
     category: 'business',
-    preview: '💼',
+    preview: Briefcase,
     settings: {
       qrColor: '#1e293b',
       qrColorGradient: { type: 'solid', color: '#1e293b' },
@@ -103,7 +115,7 @@ export const designTemplates: DesignTemplate[] = [
     id: 'ocean-breeze',
     name: 'Ocean Breeze',
     category: 'creative',
-    preview: '🌊',
+    preview: Waves,
     settings: {
       qrColor: '#0ea5e9',
       qrColorGradient: {
@@ -142,7 +154,7 @@ export const designTemplates: DesignTemplate[] = [
     id: 'sunset-vibes',
     name: 'Sunset Vibes',
     category: 'vibrant',
-    preview: '🌅',
+    preview: Sunset,
     settings: {
       qrColor: '#f59e0b',
       qrColorGradient: {
@@ -173,7 +185,7 @@ export const designTemplates: DesignTemplate[] = [
     id: 'forest-green',
     name: 'Forest Green',
     category: 'creative',
-    preview: '🌲',
+    preview: TreePine,
     settings: {
       qrColor: '#059669',
       qrColorGradient: {
@@ -207,7 +219,7 @@ export const designTemplates: DesignTemplate[] = [
     id: 'minimal-dots',
     name: 'Minimal Dots',
     category: 'minimal',
-    preview: '⚪',
+    preview: Circle,
     settings: {
       qrColor: '#374151',
       qrColorGradient: { type: 'solid', color: '#374151' },
@@ -228,7 +240,7 @@ export const designTemplates: DesignTemplate[] = [
     id: 'neon-glow',
     name: 'Neon Glow',
     category: 'vibrant',
-    preview: '✨',
+    preview: Zap,
     settings: {
       qrColor: '#a855f7',
       qrColorGradient: {
@@ -258,7 +270,7 @@ export const designTemplates: DesignTemplate[] = [
     id: 'corporate-blue',
     name: 'Corporate Blue',
     category: 'business',
-    preview: '🏢',
+    preview: Building2,
     settings: {
       qrColor: '#1e40af',
       qrColorGradient: { type: 'solid', color: '#1e40af' },
@@ -283,7 +295,7 @@ export const designTemplates: DesignTemplate[] = [
     id: 'candy-pop',
     name: 'Candy Pop',
     category: 'creative',
-    preview: '🍭',
+    preview: Candy,
     settings: {
       qrColor: '#ec4899',
       qrColorGradient: {

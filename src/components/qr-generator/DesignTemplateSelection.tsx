@@ -66,7 +66,7 @@ const DesignTemplateSelection = ({ onTemplateSelect }: DesignTemplateSelectionPr
                   marginBottom: 8,
                 }}
               >
-                {template.preview}
+                <template.preview size={32} strokeWidth={1.5} />
               </div>
               <Text
                 strong
