@@ -194,7 +194,6 @@ export const designTemplates: DesignTemplate[] = [
         enabled: true,
         style: 'banner',
         color: '#059669',
-        text: 'Scan Me!',
         textColor: '#ffffff',
       },
       shadow: false,
