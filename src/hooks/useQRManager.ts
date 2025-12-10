@@ -86,7 +86,6 @@ export const useQRManager = ({
           }
         });
 
-        message.success('QR Code loaded for editing');
       } catch (err: any) {
         message.error(err.response?.data?.message || err.message || 'Failed to load QR code');
         navigate('/dashboard');
