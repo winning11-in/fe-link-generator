@@ -146,5 +146,28 @@ export const scansAPI = {
   },
 };
 
+// Contact API
+export const contactAPI = {
+  create: async (data: { name: string; email: string; subject: string; message: string }) => {
+    const response = await api.post('/contacts', data);
+    return response.data;
+  },
+  
+  getAll: async () => {
+    const response = await api.get('/contacts');
+    return response.data;
+  },
+  
+  updateStatus: async (id: string, status: string) => {
+    const response = await api.put(`/contacts/${id}`, { status });
+    return response.data;
+  },
+  
+  delete: async (id: string) => {
+    const response = await api.delete(`/contacts/${id}`);
+    return response.data;
+  },
+};
+
 export default api;
 

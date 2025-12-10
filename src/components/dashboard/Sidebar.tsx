@@ -1,6 +1,7 @@
 import { Layout, Menu, Button, Avatar, Typography } from 'antd';
-import { LayoutDashboard, BarChart3, LogOut } from 'lucide-react';
+import { QrCode, BarChart3, LogOut, HelpCircle, Mail, MessageSquare } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 const { Sider } = Layout;
 const { Text } = Typography;
@@ -14,12 +15,13 @@ interface SidebarProps {
 const Sidebar = ({ userName, onLogout }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
   const menuItems = [
     {
       key: '/dashboard',
-      icon: <LayoutDashboard size={20} />,
-      label: 'Dashboard',
+      icon: <QrCode size={20} />,
+      label: 'My QR Codes',
       onClick: () => navigate('/dashboard'),
     },
     {
@@ -28,6 +30,24 @@ const Sidebar = ({ userName, onLogout }: SidebarProps) => {
       label: 'Analytics',
       onClick: () => navigate('/analytics'),
     },
+    {
+      key: '/faqs',
+      icon: <HelpCircle size={20} />,
+      label: 'FAQs',
+      onClick: () => navigate('/faqs'),
+    },
+    {
+      key: '/contact',
+      icon: <Mail size={20} />,
+      label: 'Contact Us',
+      onClick: () => navigate('/contact'),
+    },
+    ...(user?.isAdmin ? [{
+      key: '/admin/contacts',
+      icon: <MessageSquare size={20} />,
+      label: 'Contact Submissions',
+      onClick: () => navigate('/admin/contacts'),
+    }] : []),
   ];
 
   return (

@@ -9,6 +9,9 @@ import CreateQR from './pages/CreateQR';
 import QRAnalytics from './pages/QRAnalytics';
 import ScanRedirect from './pages/ScanRedirect';
 import Analytics from './pages/Analytics';
+import FAQs from './pages/FAQs';
+import Contact from './pages/Contact';
+import ContactSubmissions from './pages/ContactSubmissions';
 
 function App() {
   return (
@@ -63,6 +66,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <QRAnalytics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/faqs"
+              element={
+                <ProtectedRoute>
+                  <FAQs />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/contact"
+              element={
+                <ProtectedRoute>
+                  <Contact />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/contacts"
+              element={
+                <ProtectedRoute>
+                  <ContactSubmissions />
                 </ProtectedRoute>
               }
             />
