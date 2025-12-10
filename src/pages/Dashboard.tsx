@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {  message, Row, Col, Card, Typography, Skeleton } from "antd";
+import { Spin, message, Row, Col, Card, Typography } from "antd";
 import { Plus, FileText, Sparkles } from "lucide-react";
 import { qrCodeAPI } from "../services/api";
 import type { QRCode } from "../types";
@@ -212,30 +212,9 @@ const Dashboard = () => {
 
         {/* QR Codes List */}
         {loading ? (
-          <Row gutter={[16, 16]}>
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Col key={i} xs={24} sm={12} md={8} lg={6}>
-                <Card
-                  style={{
-                    borderRadius: 12,
-                    height: "100%",
-                  }}
-                  bodyStyle={{ padding: 16 }}
-                >
-                  <div style={{ marginBottom: 16 }}>
-                    <Skeleton.Image
-                      active
-                      style={{
-                        width: "100%",
-                        height: 200,
-                      }}
-                    />
-                  </div>
-                  <Skeleton active title paragraph={{ rows: 2 }} />
-                </Card>
-              </Col>
-            ))}
-          </Row>
+          <div style={{ textAlign: "center", padding: "60px 0" }}>
+            <Spin size="large" />
+          </div>
         ) : qrCodes.length === 0 ? (
           <EmptyState onCreateClick={() => navigate("/create")} />
         ) : (
