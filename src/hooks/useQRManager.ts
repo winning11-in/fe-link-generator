@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
+import QRCodeStyling from 'qr-code-styling';
 import { qrCodeAPI } from '../services/api';
 import { templates } from '../components/qr-generator/templates';
 import { parseQRData } from '../utils/qrDataGenerator';
@@ -98,6 +99,130 @@ export const useQRManager = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, navigate]);
 
+  const generatePreviewImage = async (data: string, customization: any): Promise<string> => {
+    return new Promise((resolve) => {
+      const errorCorrectionMap: Record<string, "L" | "M" | "Q" | "H"> = {
+        L: "L", M: "M", Q: "Q", H: "H",
+      };
+
+      const dotsOptions: any = { type: customization.dotStyle || "square" };
+      const qrColorGradient = customization.qrColorGradient;
+      
+      if (qrColorGradient?.type === "solid") {
+        dotsOptions.color = customization.qrColor || "#000000";
+      } else if (qrColorGradient?.type === "linear" && qrColorGradient.gradient) {
+        dotsOptions.gradient = {
+          type: "linear",
+          rotation: (qrColorGradient.gradient.rotation || 0) * (Math.PI / 180),
+          colorStops: qrColorGradient.gradient.colorStops,
+        };
+      } else if (qrColorGradient?.type === "radial" && qrColorGradient.gradient) {
+        dotsOptions.gradient = {
+          type: "radial",
+          colorStops: qrColorGradient.gradient.colorStops,
+        };
+      } else {
+        dotsOptions.color = customization.qrColor || "#000000";
+      }
+
+      const backgroundOptions: any = {};
+      const bgColorGradient = customization.bgColorGradient;
+
+      if (customization.bgImage) {
+        backgroundOptions.color = "transparent";
+      } else if (bgColorGradient?.type === "solid") {
+        backgroundOptions.color = customization.bgColor || "#ffffff";
+      } else if (bgColorGradient?.type === "linear" && bgColorGradient.gradient) {
+        backgroundOptions.gradient = {
+          type: "linear",
+          rotation: (bgColorGradient.gradient.rotation || 0) * (Math.PI / 180),
+          colorStops: bgColorGradient.gradient.colorStops,
+        };
+      } else if (bgColorGradient?.type === "radial" && bgColorGradient.gradient) {
+        backgroundOptions.gradient = {
+          type: "radial",
+          colorStops: bgColorGradient.gradient.colorStops,
+        };
+      } else {
+        backgroundOptions.color = customization.bgColor || "#ffffff";
+      }
+
+      const cornerColor = qrColorGradient?.type === "solid"
+        ? customization.qrColor || "#000000"
+        : qrColorGradient?.gradient?.colorStops?.[0]?.color || customization.qrColor || "#000000";
+
+      const qrConfig: any = {
+        width: 300,
+        height: 300,
+        data: data,
+        margin: customization.margin ?? 10,
+        dotsOptions,
+        backgroundOptions,
+        cornersSquareOptions: {
+          color: cornerColor,
+          type: customization.cornerSquareStyle || "square",
+        },
+        cornersDotOptions: {
+          color: cornerColor,
+          type: customization.cornerDotStyle || "square",
+        },
+        qrOptions: {
+          errorCorrectionLevel: errorCorrectionMap[customization.errorLevel || "M"],
+        },
+      };
+
+      if (customization.logo) {
+        qrConfig.imageOptions = {
+          hideBackgroundDots: customization.removeBackground ?? true,
+          imageSize: (customization.logoSize || 50) / 280,
+          margin: customization.logoPadding || 5,
+        };
+        qrConfig.image = customization.logo;
+      }
+
+      const tempContainer = document.createElement('div');
+      tempContainer.style.position = 'absolute';
+      tempContainer.style.left = '-9999px';
+      document.body.appendChild(tempContainer);
+
+      const qrCode = new QRCodeStyling(qrConfig);
+      qrCode.append(tempContainer);
+
+      setTimeout(() => {
+        const canvas = tempContainer.querySelector('canvas');
+        if (canvas) {
+          // Apply background image if exists
+          if (customization.bgImage) {
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              const img = new Image();
+              img.onload = () => {
+                ctx.globalCompositeOperation = "destination-over";
+                ctx.globalAlpha = customization.bgImageOpacity ?? 1;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                ctx.globalCompositeOperation = "source-over";
+                ctx.globalAlpha = 1;
+                
+                const previewDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                document.body.removeChild(tempContainer);
+                resolve(previewDataUrl);
+              };
+              img.crossOrigin = "anonymous";
+              img.src = customization.bgImage;
+            }
+          } else {
+            const previewDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+            document.body.removeChild(tempContainer);
+            resolve(previewDataUrl);
+          }
+        } else {
+          document.body.removeChild(tempContainer);
+          resolve('');
+        }
+      }, 200);
+    });
+  };
+
   const handleSaveQR = async () => {
     try {
       setLoading(true);
@@ -112,33 +237,39 @@ export const useQRManager = ({
         ? selectedTemplate.type as 'url' | 'text' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'upi' | 'vcard' | 'instagram' | 'facebook' | 'youtube' | 'whatsapp'
         : 'text';
 
+      const customization = {
+        qrColor: designState.qrColor,
+        qrColorGradient: designState.qrColorGradient,
+        bgColor: designState.bgColor,
+        bgColorGradient: designState.bgColorGradient,
+        bgImage: designState.bgImage,
+        bgImageOpacity: designState.bgImageOpacity,
+        qrSize: designState.qrSize,
+        errorLevel: designState.errorLevel,
+        dotStyle: designState.dotStyle,
+        cornerSquareStyle: designState.cornerSquareStyle,
+        cornerDotStyle: designState.cornerDotStyle,
+        logo: designState.logo,
+        logoSize: designState.logoSize,
+        logoPadding: designState.logoPadding,
+        removeBackground: designState.removeBackground,
+        margin: designState.margin,
+        frameOptions: designState.frameOptions,
+        shadow: designState.shadow,
+        shadowColor: designState.shadowColor,
+        shadowBlur: designState.shadowBlur,
+        borderRadius: designState.borderRadius,
+      };
+
+      // Generate preview image
+      const previewImage = await generatePreviewImage(data, customization);
+
       const qrPayload = {
         title: contentState.title,
         data,
         type: qrType,
-        customization: {
-          qrColor: designState.qrColor,
-          qrColorGradient: designState.qrColorGradient,
-          bgColor: designState.bgColor,
-          bgColorGradient: designState.bgColorGradient,
-          bgImage: designState.bgImage,
-          bgImageOpacity: designState.bgImageOpacity,
-          qrSize: designState.qrSize,
-          errorLevel: designState.errorLevel,
-          dotStyle: designState.dotStyle,
-          cornerSquareStyle: designState.cornerSquareStyle,
-          cornerDotStyle: designState.cornerDotStyle,
-          logo: designState.logo,
-          logoSize: designState.logoSize,
-          logoPadding: designState.logoPadding,
-          removeBackground: designState.removeBackground,
-          margin: designState.margin,
-          frameOptions: designState.frameOptions,
-          shadow: designState.shadow,
-          shadowColor: designState.shadowColor,
-          shadowBlur: designState.shadowBlur,
-          borderRadius: designState.borderRadius,
-        },
+        previewImage,
+        customization,
       };
 
       if (isEditMode) {

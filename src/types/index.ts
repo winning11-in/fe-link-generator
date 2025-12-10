@@ -56,6 +56,7 @@ export interface QRCode {
   title: string;
   scanCount: number;
   isActive: boolean;
+  previewImage?: string;
   customization?: {
     qrColor: string;
     qrColorGradient?: GradientColor;
