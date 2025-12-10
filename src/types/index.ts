@@ -31,17 +31,38 @@ export interface Scan {
   updatedAt: string;
 }
 
+export interface GradientColor {
+  type: 'solid' | 'linear' | 'radial';
+  color?: string;
+  gradient?: {
+    colorStops: Array<{ offset: number; color: string }>;
+    rotation?: number;
+  };
+}
+
+export interface FrameOptions {
+  enabled: boolean;
+  style: 'none' | 'basic' | 'rounded' | 'banner';
+  color: string;
+  text?: string;
+  textColor?: string;
+}
+
 export interface QRCode {
   _id: string;
   user: string;
-  type: 'url' | 'text' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'upi';
+  type: 'url' | 'text' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'upi' | 'vcard' | 'instagram' | 'facebook' | 'youtube' | 'whatsapp';
   data: string;
   title: string;
   scanCount: number;
   isActive: boolean;
   customization?: {
     qrColor: string;
+    qrColorGradient?: GradientColor;
     bgColor: string;
+    bgColorGradient?: GradientColor;
+    bgImage?: string;
+    bgImageOpacity?: number;
     qrSize: number;
     errorLevel: 'L' | 'M' | 'Q' | 'H';
     dotStyle: string;
@@ -51,6 +72,12 @@ export interface QRCode {
     logoSize: number;
     logoPadding: number;
     removeBackground: boolean;
+    margin?: number;
+    frameOptions?: FrameOptions;
+    shadow?: boolean;
+    shadowColor?: string;
+    shadowBlur?: number;
+    borderRadius?: number;
   };
   createdAt: string;
   updatedAt: string;

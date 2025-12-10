@@ -63,12 +63,16 @@ export const qrCodeAPI = {
 
   // Create new QR code
   create: async (data: {
-    type: 'url' | 'text' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'upi';
+    type: 'url' | 'text' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'upi' | 'vcard' | 'instagram' | 'facebook' | 'youtube' | 'whatsapp';
     data: string;
     title: string;
     customization?: {
       qrColor: string;
+      qrColorGradient?: any;
       bgColor: string;
+      bgColorGradient?: any;
+      bgImage?: string | null;
+      bgImageOpacity?: number;
       qrSize: number;
       errorLevel: 'L' | 'M' | 'Q' | 'H';
       dotStyle: string;
@@ -78,6 +82,12 @@ export const qrCodeAPI = {
       logoSize: number;
       logoPadding: number;
       removeBackground: boolean;
+      margin?: number;
+      frameOptions?: any;
+      shadow?: boolean;
+      shadowColor?: string;
+      shadowBlur?: number;
+      borderRadius?: number;
     };
   }) => {
     const response = await api.post('/qrcodes', data);
