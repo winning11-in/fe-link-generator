@@ -211,13 +211,18 @@ export const SubmitButton = styled.button<{ loading?: boolean }>`
   font-weight: 600;
   font-size: 15px;
   color: #fff;
-  cursor: pointer;
+  cursor: ${props => props.loading ? 'not-allowed' : 'pointer'};
   transition: all 0.2s;
   opacity: ${props => props.loading ? 0.7 : 1};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
 
   &:hover:not(:disabled) {
-    background: #0f172a;
-    transform: translateY(-1px);
+    background: ${props => props.loading ? '#1e293b' : '#0f172a'};
+    transform: ${props => props.loading ? 'none' : 'translateY(-1px)'};
   }
 
   &:active:not(:disabled) {
@@ -226,6 +231,25 @@ export const SubmitButton = styled.button<{ loading?: boolean }>`
 
   &:disabled {
     cursor: not-allowed;
+  }
+
+  /* Spinner */
+  ${props => props.loading && `
+    &::before {
+      content: '';
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+  `}
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 `;
 
