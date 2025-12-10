@@ -146,17 +146,7 @@ const SignIn = () => {
             layout="vertical"
             requiredMark={false}
           >
-            <Form.Item
-              name="email"
-              rules={[
-                { required: true, message: "Email is required" },
-                { type: "email", message: "Please enter a valid email address" },
-                {
-                  pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: "Please enter a valid email format"
-                },
-              ]}
-            >
+            <Form.Item name="email">
               <Input
                 prefix={<Mail size={16} style={{ color: "#94a3b8" }} />}
                 placeholder="Email"
@@ -171,14 +161,7 @@ const SignIn = () => {
               />
             </Form.Item>
 
-            <Form.Item
-              name="password"
-              rules={[
-                { required: true, message: "Password is required" },
-                { min: 8, message: "Password must be at least 8 characters" },
-              ]}
-              style={{ marginBottom: "12px" }}
-            >
+            <Form.Item name="password" style={{ marginBottom: "12px" }}>
               <Input.Password
                 prefix={<Lock size={16} style={{ color: "#94a3b8" }} />}
                 placeholder="Password"

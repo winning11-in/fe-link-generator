@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 
 const API_URL = 'https://be-link-generator.vercel.app/api';
@@ -138,3 +137,4 @@ export const scansAPI = {
 };
 
 export default api;
+

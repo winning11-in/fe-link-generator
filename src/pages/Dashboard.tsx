@@ -59,17 +59,7 @@ const Dashboard = () => {
                 transition: "all 0.3s ease",
               }}
               bodyStyle={{ padding: 32, textAlign: "center" }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#764ba2";
-                e.currentTarget.style.transform = "translateY(-4px)";
-                e.currentTarget.style.boxShadow =
-                  "0 8px 24px rgba(102, 126, 234, 0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#667eea";
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
+             
             >
               <div
                 style={{
