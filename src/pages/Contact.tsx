@@ -1,13 +1,14 @@
 import { Card, Form, Input, Button, message, Typography, Row, Col } from 'antd';
-import { Mail, MapPin, Phone } from 'lucide-react';
+import { Mail, MapPin, Phone, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
-import AppLayout from '../components/layout/AppLayout';
+import { useNavigate } from 'react-router-dom';
 import { contactAPI } from '../services/api';
 
 const { Title, Paragraph, Text } = Typography;
 const { TextArea } = Input;
 
 const Contact = () => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
@@ -25,8 +26,18 @@ const Contact = () => {
   };
 
   return (
-    <AppLayout>
+    <div style={{ minHeight: '100vh', background: '#f5f5f5' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 20px' }}>
+      {/* Back Button */}
+      <Button
+        icon={<ArrowLeft size={18} />}
+        onClick={() => navigate('/dashboard')}
+        size="large"
+        style={{ marginBottom: 24, borderRadius: 8 }}
+      >
+        Back to Dashboard
+      </Button>
+
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: 48 }}>
         <div
@@ -268,7 +279,7 @@ const Contact = () => {
         </Col>
       </Row>
     </div>
-    </AppLayout>
+    </div>
   );
 };
 

@@ -1,11 +1,13 @@
-import { Collapse, Typography, Card } from 'antd';
-import { HelpCircle } from 'lucide-react';
-import AppLayout from '../components/layout/AppLayout';
+import { Collapse, Typography, Card, Button } from 'antd';
+import { HelpCircle, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const { Title, Paragraph ,Text } = Typography;
 const { Panel } = Collapse;
 
 const FAQs = () => {
+  const navigate = useNavigate();
+
   const faqs = [
     {
       question: 'What is a QR code?',
@@ -58,8 +60,18 @@ const FAQs = () => {
   ];
 
   return (
-    <AppLayout>
+    <div style={{ minHeight: '100vh', background: '#f5f5f5' }}>
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '40px 20px' }}>
+      {/* Back Button */}
+      <Button
+        icon={<ArrowLeft size={18} />}
+        onClick={() => navigate('/dashboard')}
+        size="large"
+        style={{ marginBottom: 24, borderRadius: 8 }}
+      >
+        Back to Dashboard
+      </Button>
+
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: 40 }}>
         <div
@@ -153,7 +165,7 @@ const FAQs = () => {
         </a>
       </Card>
     </div>
-    </AppLayout>
+    </div>
   );
 };
 
