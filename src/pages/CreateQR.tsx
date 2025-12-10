@@ -289,9 +289,7 @@ const CreateQR = () => {
               <Title level={2} style={{ marginBottom: 8 }}>
                 {isEditMode ? 'Edit QR Code' : 'Create QR Code'}
               </Title>
-              <Text type="secondary" style={{ fontSize: 16 }}>
-                {isEditMode ? 'Update your QR code settings' : 'Choose a template and customize your QR code'}
-              </Text>
+              
             </div>
 
           <Row gutter={[32, 32]}>
