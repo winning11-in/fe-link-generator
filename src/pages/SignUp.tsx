@@ -169,7 +169,11 @@ const SignUp = () => {
               name="email"
               rules={[
                 { required: true, message: "Email is required" },
-                { type: "email", message: "Invalid email address" },
+                { type: "email", message: "Please enter a valid email address" },
+                {
+                  pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "Please enter a valid email format"
+                },
               ]}
             >
               <Input
@@ -190,7 +194,11 @@ const SignUp = () => {
               name="password"
               rules={[
                 { required: true, message: "Password is required" },
-                { min: 6, message: "Password must be at least 6 characters" },
+                { min: 8, message: "Password must be at least 8 characters" },
+                {
+                  pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+                  message: "Password must contain uppercase, lowercase, number and special character"
+                },
               ]}
             >
               <Input.Password

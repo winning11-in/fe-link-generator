@@ -150,7 +150,11 @@ const SignIn = () => {
               name="email"
               rules={[
                 { required: true, message: "Email is required" },
-                { type: "email", message: "Invalid email address" },
+                { type: "email", message: "Please enter a valid email address" },
+                {
+                  pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "Please enter a valid email format"
+                },
               ]}
             >
               <Input
@@ -171,7 +175,7 @@ const SignIn = () => {
               name="password"
               rules={[
                 { required: true, message: "Password is required" },
-                { min: 6, message: "Password must be at least 6 characters" },
+                { min: 8, message: "Password must be at least 8 characters" },
               ]}
               style={{ marginBottom: "12px" }}
             >
