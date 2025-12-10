@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Layout, Typography, Card, Row, Col, Input, Button, Space, message, Tabs, Spin } from 'antd';
+import { Typography, Card, Row, Col, Input, Button, Space, message, Tabs, Spin } from 'antd';
 import { ArrowLeft } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
 import { qrCodeAPI } from '../services/api';
-import Header from '../components/dashboard/Header';
+import AppLayout from '../components/layout/AppLayout';
 import TemplateSelection from '../components/qr-generator/TemplateSelection';
 import { templates } from '../components/qr-generator/templates';
 import type { QRTemplate } from '../components/qr-generator/templates';
@@ -12,13 +11,11 @@ import ContentForm from '../components/qr-generator/ContentForm';
 import CustomizationTabs from '../components/qr-generator/CustomizationTabs';
 import QRPreview from '../components/qr-generator/QRPreview';
 
-const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const CreateQR = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { user, logout } = useAuth();
   const [selectedTemplate, setSelectedTemplate] = useState<QRTemplate>(templates[0]);
   const [title, setTitle] = useState('');
   const [qrData, setQrData] = useState('');
@@ -243,13 +240,7 @@ const CreateQR = () => {
   };
 
   const handleDownload = () => {
-    // Download handled by QRPreview component
     message.success('QR Code downloaded!');
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/signin');
   };
 
   const customizationTabs = CustomizationTabs({
@@ -278,31 +269,23 @@ const CreateQR = () => {
   });
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#f9fafb' }}>
-      <Header
-        userName={user?.name || 'User'}
-        onCreateClick={() => {}}
-        onLogout={handleLogout}
-      />
-
-      <Content style={{ padding: '32px 50px' }}>
-        {fetchingQR ? (
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-            <Spin size="large" tip="Loading QR Code..." />
-          </div>
-        ) : (
-          <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-            {/* Back Button */}
+    <AppLayout>
+      {fetchingQR ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+          <Spin size="large" tip="Loading QR Code..." />
+        </div>
+      ) : (
+        <div style={{   margin: '0 auto' }}>
             <Button
               icon={<ArrowLeft size={18} />}
               onClick={() => navigate('/dashboard')}
-              style={{ marginBottom: 24 }}
+              style={{ marginBottom: 16 }}
             >
               Back to Dashboard
             </Button>
 
             {/* Page Header */}
-            <div style={{ marginBottom: 32 }}>
+            <div style={{ marginBottom: 10 }}>
               <Title level={2} style={{ marginBottom: 8 }}>
                 {isEditMode ? 'Edit QR Code' : 'Create QR Code'}
               </Title>
@@ -439,10 +422,9 @@ const CreateQR = () => {
               />
             </Col>
           </Row>
-          </div>
-        )}
-      </Content>
-    </Layout>
+        </div>
+      )}
+    </AppLayout>
   );
 };
 

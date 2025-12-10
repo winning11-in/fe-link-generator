@@ -1,22 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Layout, Typography, Row, Col, Spin, message } from 'antd';
+import { Typography, Row, Col, Spin, message } from 'antd';
 import { Zap, Users, QrCode as QrCodeIcon, TrendingUp } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
 import { qrCodeAPI, scansAPI } from '../services/api';
-import Header from '../components/dashboard/Header';
+import AppLayout from '../components/layout/AppLayout';
 import StatCard from '../components/analytics/StatCard';
 import ScansOverTimeChart from '../components/analytics/ScansOverTimeChart';
 import DeviceBreakdownChart from '../components/analytics/DeviceBreakdownChart';
 import UniqueVisitorsChart from '../components/analytics/UniqueVisitorsChart';
 
-const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Analytics = () => {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
   const [stats, setStats] = useState({
     totalScans: 0,
     uniqueVisitors: 0,
@@ -142,24 +136,11 @@ const Analytics = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/signin');
-  };
-
   return (
-    <Layout style={{ minHeight: '100vh', background: '#f9fafb' }}>
-      <Header
-        userName={user?.name || 'User'}
-        onCreateClick={() => navigate('/dashboard')}
-        onLogout={handleLogout}
-      />
-
-      <Content style={{ padding: '32px 50px' }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-          {/* Page Header */}
-          <div style={{ marginBottom: 32 }}>
-            <Title level={2} style={{ marginBottom: 8 }}>
+    <AppLayout>
+      <div style={{  margin: '0 auto' }}>
+           <div style={{ marginBottom: 32 }}>
+            <Title level={2} style={{ marginBottom: 8 ,marginTop:0}}>
               Analytics
             </Title>
             <Text type="secondary" style={{ fontSize: 16 }}>
@@ -237,9 +218,8 @@ const Analytics = () => {
             </>
           )}
         </div>
-      </Content>
-    </Layout>
-  );
-};
-
-export default Analytics;
+      </AppLayout>
+    );
+  };
+  
+  export default Analytics;
