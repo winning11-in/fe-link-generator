@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Table, Tag, Button, message, Popconfirm, Card, Typography, Select, Space } from 'antd';
-import { Mail, Trash2, Eye } from 'lucide-react';
+import {   Trash2, Eye } from 'lucide-react';
 import { contactAPI } from '../services/api';
 import AppLayout from '../components/layout/AppLayout';
 import type { ColumnsType } from 'antd/es/table';
@@ -153,14 +153,13 @@ const ContactSubmissions = () => {
 
   return (
     <AppLayout>
-      <div style={{ padding: '24px' }}>
+      <div  >
         <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <Title level={2} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 12 }}>
-              <Mail size={32} />
-              Contact Submissions
+               Contact Submissions
             </Title>
-            <p style={{ color: '#8c8c8c', margin: '8px 0 0 44px' }}>
+            <p style={{ color: '#8c8c8c' }}>
               Manage and respond to contact form submissions
             </p>
           </div>
