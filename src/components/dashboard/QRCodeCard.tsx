@@ -1,9 +1,9 @@
-import { Card, Button, Typography, message, Tooltip, Popconfirm } from 'antd';
-import { BarChart3, Trash2, Download, Share2, Edit } from 'lucide-react';
-import { useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import QRCodeStyling from 'qr-code-styling';
-import type { QRCode } from '../../types';
+import { Card, Button, Typography, message, Tooltip, Popconfirm } from "antd";
+import { BarChart3, Trash2, Download, Share2, Edit } from "lucide-react";
+import { useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import QRCodeStyling from "qr-code-styling";
+import type { QRCode } from "../../types";
 
 const { Text, Title } = Typography;
 
@@ -25,11 +25,11 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
     const container = containerRef.current;
     const customization = qr.customization;
 
-    const errorCorrectionMap: Record<string, 'L' | 'M' | 'Q' | 'H'> = {
-      'L': 'L',
-      'M': 'M',
-      'Q': 'Q',
-      'H': 'H'
+    const errorCorrectionMap: Record<string, "L" | "M" | "Q" | "H"> = {
+      L: "L",
+      M: "M",
+      Q: "Q",
+      H: "H",
     };
 
     const qrCodeConfig: any = {
@@ -37,22 +37,23 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
       height: 120,
       data: scanUrl,
       dotsOptions: {
-        color: customization?.qrColor || '#000000',
-        type: (customization?.dotStyle || 'square'),
+        color: customization?.qrColor || "#000000",
+        type: customization?.dotStyle || "square",
       },
       backgroundOptions: {
-        color: customization?.bgColor || '#ffffff',
+        color: customization?.bgColor || "#ffffff",
       },
       cornersSquareOptions: {
-        color: customization?.qrColor || '#000000',
-        type: (customization?.cornerSquareStyle || 'square'),
+        color: customization?.qrColor || "#000000",
+        type: customization?.cornerSquareStyle || "square",
       },
       cornersDotOptions: {
-        color: customization?.qrColor || '#000000',
-        type: (customization?.cornerDotStyle || 'square'),
+        color: customization?.qrColor || "#000000",
+        type: customization?.cornerDotStyle || "square",
       },
       qrOptions: {
-        errorCorrectionLevel: errorCorrectionMap[customization?.errorLevel || 'M'],
+        errorCorrectionLevel:
+          errorCorrectionMap[customization?.errorLevel || "M"],
       },
     };
 
@@ -68,29 +69,29 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
 
     try {
       const qrCode = new QRCodeStyling(qrCodeConfig);
-      
-      container.innerHTML = '';
+
+      container.innerHTML = "";
       qrCode.append(container);
       qrCodeRef.current = qrCode;
     } catch (error) {
-      console.error('Error rendering QR code:', error);
+      console.error("Error rendering QR code:", error);
     }
 
     return () => {
       if (container) {
-        container.innerHTML = '';
+        container.innerHTML = "";
       }
     };
   }, [qr, scanUrl]);
 
   const handleDownload = () => {
     if (!qrCodeRef.current) return;
-    
+
     qrCodeRef.current.download({
-      name: qr.title.replace(/\s+/g, '-') + '-qr',
-      extension: 'png',
+      name: qr.title.replace(/\s+/g, "-") + "-qr",
+      extension: "png",
     });
-    message.success('QR Code downloaded!');
+    message.success("QR Code downloaded!");
   };
 
   const handleShare = async () => {
@@ -107,7 +108,7 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
     } else {
       // Fallback: copy to clipboard
       navigator.clipboard.writeText(scanUrl);
-      message.success('Link copied to clipboard!');
+      message.success("Link copied to clipboard!");
     }
   };
   return (
@@ -115,40 +116,44 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
       hoverable
       style={{
         borderRadius: 12,
-        border: '1px solid #e8e8e8',
-        overflow: 'hidden',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        height: '100%',
-        background: '#ffffff',
+        border: "1px solid #e8e8e8",
+        overflow: "hidden",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        height: "100%",
+        background: "#ffffff",
       }}
       bodyStyle={{ padding: 0 }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)';
-        e.currentTarget.style.borderColor = '#667eea';
+        e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+        e.currentTarget.style.borderColor = "#667eea";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = 'none';
-        e.currentTarget.style.borderColor = '#e8e8e8';
+        e.currentTarget.style.boxShadow = "none";
+        e.currentTarget.style.borderColor = "#e8e8e8";
       }}
     >
       {/* QR Code Preview */}
-      <div style={{ 
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        padding: 24,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-      }}>
-        <div style={{
-          background: '#ffffff',
-          padding: 12,
-          borderRadius: 8,
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        }}>
+      <div
+        style={{
+          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          padding: 24,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          position: "relative",
+        }}
+      >
+        <div
+          style={{
+            background: "#ffffff",
+            padding: 12,
+            borderRadius: 8,
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          }}
+        >
           <div ref={containerRef} style={{ width: 120, height: 120 }} />
         </div>
-        
+
         {/* Status Badge */}
         {/* {qr.isActive && (
           <div style={{ 
@@ -171,17 +176,17 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
       {/* Content */}
       <div style={{ padding: 16 }}>
         {/* Title */}
-        <Title 
-          level={5} 
-          style={{ 
+        <Title
+          level={5}
+          style={{
             margin: 0,
             marginBottom: 6,
             fontSize: 16,
             fontWeight: 600,
-            color: '#1a1a1a',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            color: "#1a1a1a",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
           title={qr.title}
         >
@@ -192,13 +197,13 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
         <Text
           type="secondary"
           style={{
-            display: 'block',
+            display: "block",
             fontSize: 12,
             marginBottom: 12,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            color: '#8c8c8c',
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            color: "#8c8c8c",
           }}
           title={qr.data}
         >
@@ -206,75 +211,90 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
         </Text>
 
         {/* Stats Row */}
-        <div style={{ 
-          display: 'flex',
-          background: '#fafafa',
-          borderRadius: 6,
-          padding: '10px 0',
-          marginBottom: 12,
-        }}>
-          <div style={{ 
-            flex: 1, 
-            textAlign: 'center',
-            borderRight: '1px solid #e8e8e8',
-          }}>
-            <div style={{ 
-              fontSize: 18, 
-              fontWeight: 700,
-              color: '#667eea',
-              lineHeight: 1,
-            }}>
+        <div
+          style={{
+            display: "flex",
+            background: "#fafafa",
+            borderRadius: 6,
+            padding: "10px 0",
+            marginBottom: 12,
+          }}
+        >
+          <div
+            style={{
+              flex: 1,
+              textAlign: "center",
+              borderRight: "1px solid #e8e8e8",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 18,
+                fontWeight: 700,
+                color: "#667eea",
+                lineHeight: 1,
+              }}
+            >
               {qr.scanCount || 0}
             </div>
-            <div style={{ 
-              fontSize: 11,
-              color: '#8c8c8c',
-              marginTop: 4,
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-            }}>
+            <div
+              style={{
+                fontSize: 11,
+                color: "#8c8c8c",
+                marginTop: 4,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+              }}
+            >
               Scans
             </div>
           </div>
-          <div style={{ flex: 1, textAlign: 'center' }}>
-            <div style={{ 
-              fontSize: 13,
-              fontWeight: 600,
-              color: '#667eea',
-              lineHeight: 1,
-            }}>
+          <div style={{ flex: 1, textAlign: "center" }}>
+            <div
+              style={{
+                fontSize: 13,
+                fontWeight: 600,
+                color: "#667eea",
+                lineHeight: 1,
+              }}
+            >
               {qr.type.toUpperCase()}
             </div>
-            <div style={{ 
-              fontSize: 11,
-              color: '#8c8c8c',
-              marginTop: 4,
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-            }}>
+            <div
+              style={{
+                fontSize: 11,
+                color: "#8c8c8c",
+                marginTop: 4,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+              }}
+            >
               Type
             </div>
           </div>
         </div>
 
         {/* Actions */}
-        <div style={{ 
-          display: 'flex',
-          gap: 6,
-          justifyContent: 'space-between',
-        }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 6,
+            justifyContent: "space-between",
+          }}
+        >
           <Tooltip title="Edit">
             <Button
               type="text"
               shape="circle"
               icon={<Edit size={16} />}
               onClick={() => navigate(`/edit/${qr._id}`)}
-              style={{ 
+              style={{
                 flex: 1,
                 height: 36,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "10px",
               }}
             />
           </Tooltip>
@@ -285,12 +305,13 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
               shape="circle"
               icon={<Download size={16} />}
               onClick={handleDownload}
-              style={{ 
+              style={{
                 flex: 1,
                 height: 36,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "10px",
               }}
             />
           </Tooltip>
@@ -301,12 +322,13 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
               shape="circle"
               icon={<Share2 size={16} />}
               onClick={handleShare}
-              style={{ 
+              style={{
                 flex: 1,
                 height: 36,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "10px",
               }}
             />
           </Tooltip>
@@ -317,13 +339,14 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
               shape="circle"
               icon={<BarChart3 size={16} />}
               onClick={() => onAnalytics(qr._id)}
-              style={{ 
+              style={{
                 flex: 1,
                 height: 36,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#667eea',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#667eea",
+                borderRadius: "10px",
               }}
             />
           </Tooltip>
@@ -342,12 +365,13 @@ const QRCodeCard = ({ qr, onAnalytics, onDelete }: QRCodeCardProps) => {
                 shape="circle"
                 danger
                 icon={<Trash2 size={16} />}
-                style={{ 
+                style={{
                   flex: 1,
                   height: 36,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "10px",
                 }}
               />
             </Popconfirm>

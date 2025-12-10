@@ -76,7 +76,6 @@ button:not(.ant-btn):hover {
 button:not(.ant-btn):focus,
 button:not(.ant-btn):focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-} outline: 4px auto -webkit-focus-ring-color;
 }
 
 @media (prefers-color-scheme: light) {
