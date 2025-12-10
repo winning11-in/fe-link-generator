@@ -1,5 +1,5 @@
 import { Layout, Menu, Button, Avatar, Typography } from 'antd';
-import { LayoutDashboard, BarChart3, LogOut, QrCode } from 'lucide-react';
+import { LayoutDashboard, BarChart3, LogOut } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const { Sider } = Layout;
@@ -49,40 +49,8 @@ const Sidebar = ({ userName, onLogout }: SidebarProps) => {
         flexDirection: 'column',
         height: '100%',
       }}>
-        {/* Logo */}
-        <div style={{
-          padding: '20px',
-          borderBottom: '1px solid #e8e8e8',
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            cursor: 'pointer',
-          }}
-          onClick={() => navigate('/dashboard')}
-          >
-            <div style={{
-              width: 40,
-              height: 40,
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              borderRadius: 10,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fff',
-              fontSize: 18,
-              fontWeight: 700,
-            }}>
-              <QrCode size={24} />
-            </div>
-            <Text strong style={{ fontSize: 18, color: '#1a1a1a' }}>
-              QR Generator
-            </Text>
-          </div>
-        </div>
+        
 
-        {/* User Profile */}
         <div style={{
           padding: '16px 20px',
           borderBottom: '1px solid #e8e8e8',
