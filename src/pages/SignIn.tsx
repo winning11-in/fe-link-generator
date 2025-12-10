@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Form, Input, Button, Typography, message, Card } from 'antd';
-import { Lock, Mail } from 'lucide-react';
+import { Form, Input, Button, Typography, message } from 'antd';
+import { Mail, Lock, QrCode, Zap, BarChart3, Shield } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 const { Title, Text } = Typography;
@@ -27,7 +27,6 @@ const SignIn = () => {
     try {
       await login(values.email, values.password);
       navigate('/dashboard');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       message.error(err.response?.data?.message || 'Sign in failed');
     } finally {
@@ -40,51 +39,151 @@ const SignIn = () => {
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
+    <div style={{ minHeight: '100vh', display: 'flex', background: '#f8fafc' }}>
+      {/* Left Column - Branding */}
+      <div style={{
+        flex: 1,
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      }}
-    >
-      <div style={{ width: '100%', maxWidth: 400, margin: '0 auto', padding: '0 20px' }}>
-        <Card
-          style={{
-            borderRadius: 16,
-            boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
-          }}
-          bodyStyle={{ padding: 48 }}
-        >
-          <div style={{ textAlign: 'center', marginBottom: 32 }}>
-            <div
-              style={{
-                width: 56,
-                height: 56,
-                background: '#6366f1',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 16px',
-              }}
-            >
-              <Lock size={28} color="white" />
-            </div>
-            <Title level={2} style={{ marginBottom: 8 }}>
-              Welcome Back
+        padding: '60px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Decorative Elements */}
+        <div style={{
+          position: 'absolute',
+          width: '400px',
+          height: '400px',
+          background: 'rgba(255, 255, 255, 0.1)',
+          borderRadius: '50%',
+          top: '-100px',
+          right: '-100px',
+          backdropFilter: 'blur(10px)',
+        }} />
+        <div style={{
+          position: 'absolute',
+          width: '300px',
+          height: '300px',
+          background: 'rgba(255, 255, 255, 0.08)',
+          borderRadius: '50%',
+          bottom: '-80px',
+          left: '-80px',
+          backdropFilter: 'blur(10px)',
+        }} />
+
+        {/* Content */}
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '500px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px' }}>
+            <QrCode size={48} color="#fff" strokeWidth={2} />
+            <Title level={2} style={{ 
+              margin: '0 0 0 16px', 
+              color: '#fff',
+              fontSize: '32px',
+              fontWeight: 700,
+            }}>
+              QR Generator
             </Title>
-            <Text type="secondary">Sign in to continue to QR Generator</Text>
           </div>
 
+          <Title level={3} style={{ 
+            color: '#fff', 
+            marginBottom: '24px',
+            fontSize: '28px',
+            fontWeight: 300,
+            lineHeight: 1.4,
+          }}>
+            Create, Track & Manage Your QR Codes with Ease
+          </Title>
+
+          <Text style={{ 
+            color: 'rgba(255, 255, 255, 0.9)', 
+            fontSize: '16px',
+            display: 'block',
+            marginBottom: '48px',
+            lineHeight: 1.6,
+          }}>
+            Professional QR code generation platform with powerful analytics and customization options.
+          </Text>
+
+          {/* Features */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {[
+              { icon: Zap, title: 'Instant Generation', desc: 'Create QR codes in seconds' },
+              { icon: BarChart3, title: 'Real-time Analytics', desc: 'Track scans and user behavior' },
+              { icon: Shield, title: 'Secure & Reliable', desc: 'Enterprise-grade security' },
+            ].map((feature, idx) => (
+              <div key={idx} style={{ display: 'flex', alignItems: 'start', gap: '16px' }}>
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  borderRadius: '12px',
+                  padding: '12px',
+                  backdropFilter: 'blur(10px)',
+                }}>
+                  <feature.icon size={24} color="#fff" strokeWidth={2} />
+                </div>
+                <div>
+                  <Text style={{ 
+                    color: '#fff', 
+                    fontSize: '16px', 
+                    fontWeight: 600,
+                    display: 'block',
+                    marginBottom: '4px',
+                  }}>
+                    {feature.title}
+                  </Text>
+                  <Text style={{ 
+                    color: 'rgba(255, 255, 255, 0.8)', 
+                    fontSize: '14px',
+                  }}>
+                    {feature.desc}
+                  </Text>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column - Form */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '40px',
+        background: '#ffffff',
+      }}>
+        <div style={{ width: '100%', maxWidth: '440px' }}>
+          {/* Header */}
+          <div style={{ marginBottom: '48px' }}>
+            <Title level={2} style={{ 
+              margin: 0, 
+              color: '#1e293b',
+              fontSize: '32px',
+              fontWeight: 700,
+              marginBottom: '8px',
+            }}>
+              Welcome Back
+            </Title>
+            <Text style={{ 
+              color: '#64748b',
+              fontSize: '16px',
+            }}>
+              Sign in to continue to your account
+            </Text>
+          </div>
+
+          {/* Form */}
           <Form
             name="signin"
             onFinish={onFinish}
             layout="vertical"
-            size="large"
             requiredMark={false}
           >
             <Form.Item
+              label={<span style={{ color: '#334155', fontWeight: 500, fontSize: '14px' }}>Email Address</span>}
               name="email"
               rules={[
                 { required: true, message: 'Email is required' },
@@ -92,12 +191,19 @@ const SignIn = () => {
               ]}
             >
               <Input
-                prefix={<Mail size={18} />}
-                placeholder="Email Address"
+                prefix={<Mail size={18} style={{ color: '#94a3b8' }} />}
+                placeholder="Enter your email"
+                size="large"
+                style={{
+                  borderRadius: '8px',
+                  height: '48px',
+                  fontSize: '15px',
+                }}
               />
             </Form.Item>
 
             <Form.Item
+              label={<span style={{ color: '#334155', fontWeight: 500, fontSize: '14px' }}>Password</span>}
               name="password"
               rules={[
                 { required: true, message: 'Password is required' },
@@ -105,40 +211,86 @@ const SignIn = () => {
               ]}
             >
               <Input.Password
-                prefix={<Lock size={18} />}
-                placeholder="Password"
+                prefix={<Lock size={18} style={{ color: '#94a3b8' }} />}
+                placeholder="Enter your password"
+                size="large"
+                style={{
+                  borderRadius: '8px',
+                  height: '48px',
+                  fontSize: '15px',
+                }}
               />
             </Form.Item>
 
-            <Form.Item style={{ marginBottom: 16 }}>
+            <div style={{ 
+              textAlign: 'right', 
+              marginBottom: '24px',
+            }}>
+              <Text style={{ 
+                color: '#667eea',
+                fontSize: '14px',
+                cursor: 'pointer',
+                fontWeight: 500,
+              }}>
+                Forgot Password?
+              </Text>
+            </div>
+
+            <Form.Item style={{ marginBottom: '24px' }}>
               <Button
                 type="primary"
                 htmlType="submit"
                 block
                 loading={loading}
+                size="large"
                 style={{
-                  height: 48,
-                  background: '#6366f1',
-                  borderColor: '#6366f1',
+                  height: '48px',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  border: 'none',
+                  borderRadius: '8px',
                   fontWeight: 600,
-                  fontSize: 16,
+                  fontSize: '16px',
+                  boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
                 }}
               >
                 Sign In
               </Button>
             </Form.Item>
 
-            <div style={{ textAlign: 'center' }}>
-              <Text type="secondary">
+            <div style={{ 
+              textAlign: 'center',
+              paddingTop: '24px',
+              borderTop: '1px solid #e2e8f0',
+            }}>
+              <Text style={{ 
+                color: '#64748b',
+                fontSize: '15px',
+              }}>
                 Don't have an account?{' '}
-                <Link to="/signup" style={{ color: '#6366f1', fontWeight: 600 }}>
+                <Link 
+                  to="/signup" 
+                  style={{ 
+                    color: '#667eea', 
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                  }}
+                >
                   Sign Up
                 </Link>
               </Text>
             </div>
           </Form>
-        </Card>
+        </div>
       </div>
+
+      {/* Responsive Design */}
+      <style>{`
+        @media (max-width: 1024px) {
+          .ant-row {
+            flex-direction: column;
+          }
+        }
+      `}</style>
     </div>
   );
 };
