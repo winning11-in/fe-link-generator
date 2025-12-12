@@ -63,7 +63,6 @@ const Dashboard = () => {
             </Title>
             <Button
               type="primary"
-              icon={<Plus size={16} />}
               onClick={() => navigate("/create")}
               style={{
                 height: 40,
@@ -79,7 +78,7 @@ const Dashboard = () => {
                 fontWeight: 500,
               }}
             >
-              Create New
+           <Plus size={16} />   Create New
             </Button>
           </div>
         )}
