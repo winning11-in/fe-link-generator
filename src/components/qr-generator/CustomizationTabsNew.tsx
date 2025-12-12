@@ -170,24 +170,7 @@ const CustomizationTabs = (props: CustomizationTabsProps) => {
                     <Text>Stop {index + 1} ({Math.round(stop.offset * 100)}%)</Text>
                   </Space>
                 ))}
-                {qrColorGradient.type === 'linear' && (
-                  <div>
-                    <Text strong style={{ marginBottom: 8, display: 'block' }}>
-                      Rotation: {qrColorGradient.gradient?.rotation || 0}°
-                    </Text>
-                    <Slider
-                      min={0}
-                      max={360}
-                      value={qrColorGradient.gradient?.rotation || 0}
-                      onChange={(value) => {
-                        setQrColorGradient({
-                          ...qrColorGradient,
-                          gradient: { ...qrColorGradient.gradient!, rotation: value }
-                        });
-                      }}
-                    />
-                  </div>
-                )}
+              
               </Space>
             </div>
           )}
