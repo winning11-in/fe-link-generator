@@ -263,24 +263,17 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
               alignItems: "center",
               background: "#f9fafb",
               borderRadius: 8,
+              padding: 4,
             }}
           >
-            {qr.previewImage ? (
-              <img
-                src={qr.previewImage}
-                alt={qr.name}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                  borderRadius: 6,
-                }}
-              />
-            ) : (
-              <Text type="secondary" style={{ fontSize: 10, textAlign: "center" }}>
-                No Preview
-              </Text>
-            )}
+            <QRCodeSVG
+              value={qr.content || 'https://example.com'}
+              size={52}
+              fgColor={styling.fgColor}
+              bgColor="#f9fafb"
+              level="L"
+              includeMargin={false}
+            />
           </div>
         </Col>
 
