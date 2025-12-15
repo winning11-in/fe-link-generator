@@ -1,7 +1,7 @@
 import React from 'react';
-import { Typography, Slider, Radio, ColorPicker, Switch, Row, Col, Tabs, Segmented } from 'antd';
+import { Typography, Slider, Radio, ColorPicker, Switch, Tabs, Segmented } from 'antd';
 import type { Color } from 'antd/es/color-picker';
-import { QRStyling } from '../../types/qrcode';
+import type { QRStyling } from '../../types/qrCode';
 
 const { Title, Text } = Typography;
 

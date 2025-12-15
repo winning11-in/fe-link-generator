@@ -7,7 +7,8 @@ import {
   BorderOutlined,
   ThunderboltOutlined,
 } from '@ant-design/icons';
-import { DesignTemplate, designTemplates, QRStyling } from '../../types/qrcode';
+import type { DesignTemplate, QRStyling } from '../../types/qrCode';
+import { designTemplates } from '../../types/qrCode';
 
 const { Title, Text } = Typography;
 

@@ -14,7 +14,7 @@ import {
   WhatsAppOutlined,
   IdcardOutlined,
 } from '@ant-design/icons';
-import { QRType } from '../../types/qrcode';
+import type { QRType } from '../../types/qrCode';
 
 const { Title, Text } = Typography;
 

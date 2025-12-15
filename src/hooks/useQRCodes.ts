@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { QRCodeData, QRTemplate, QRStyling, QRType, defaultTemplates, defaultStyling } from '../types/qrcode';
+import type { QRCodeData, QRTemplate, QRStyling, QRType } from '../types/qrCode';
 
 const STORAGE_KEY = 'qr-codes-data';
 const DRAFT_KEY = 'qr-code-draft';

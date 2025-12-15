@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Typography, Input, Segmented } from 'antd';
 import { SearchOutlined, CheckCircleFilled } from '@ant-design/icons';
-import { QRTemplate, defaultTemplates } from '../../types/qrcode';
+import type { QRTemplate } from '../../types/qrCode';
+import { defaultTemplates } from '../../types/qrCode';
 
 const { Title, Text } = Typography;
 

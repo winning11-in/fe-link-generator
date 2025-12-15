@@ -5,9 +5,9 @@ import {
   PhoneOutlined,
   EnvironmentOutlined,
 } from '@ant-design/icons';
-import { QRType } from '../../types/qrcode';
+import type { QRType } from '../../types/qrCode';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { TextArea } = Input;
 
 interface ContentEditorProps {
