@@ -1,10 +1,11 @@
-import { useState, forwardRef } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
+import { useState, forwardRef, useEffect, useRef } from 'react';
 import { Input, ColorPicker, Slider, Popover	 } from 'antd';
+import QRCodeStyling from 'qr-code-styling';
 import { Pencil, Type} from 'lucide-react';
 import type { Color } from 'antd/es/color-picker';
 import type { QRTemplate } from '../../types';
 import type { QRStyling } from '../../types/qrCode';
+import QRRenderer from './QRRenderer';
 
 interface QRCodePreviewProps {
   content: string;
@@ -339,22 +340,63 @@ const QRCodePreview = forwardRef<HTMLDivElement, QRCodePreviewProps>(({
     </div>
   );
 
+  const qrContainerRef = useRef<HTMLDivElement | null>(null);
+  const qrInstanceRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (compact) return;
+
+    const buildOptions = () => ({
+      width: qrSize,
+      height: qrSize,
+      data: content || 'https://example.com',
+      dotsOptions: {
+        color: styling.fgColor,
+        type: (styling.dotStyle as any) || 'square',
+      },
+      cornersSquareOptions: {
+        color: styling.fgColor,
+        type: styling.cornerStyle === 'extra-rounded' ? 'extra-rounded' : (styling.cornerStyle === 'dot' ? 'dot' : 'square'),
+      },
+      cornersDotOptions: {
+        color: styling.fgColor,
+        type: styling.cornerStyle === 'dot' ? 'dot' : 'square',
+      },
+      backgroundOptions: {
+        color: styling.bgColor,
+      },
+      image: styling.image?.url || undefined,
+      imageOptions: styling.image?.url ? {
+        hideBackgroundDots: true,
+        imageSize: (styling.image?.size || 20) / 100,
+        margin: styling.image?.margin || 2,
+      } : undefined,
+      qrOptions: {
+        errorCorrectionLevel: styling.level,
+      },
+    });
+
+    try {
+      // Recreate instance on every change to ensure image updates (some libs cache image sizing)
+      const opts = buildOptions();
+      if (qrContainerRef.current) {
+        qrContainerRef.current.innerHTML = '';
+        qrInstanceRef.current = new (QRCodeStyling as any)(opts);
+        qrInstanceRef.current.append(qrContainerRef.current);
+      }
+    } catch (e) {
+      console.warn('qr styling error', e);
+      qrInstanceRef.current = null;
+    }
+
+    return () => {
+      // no cleanup required
+    };
+  }, [content, styling, qrSize, compact]);
+
   const renderQRCode = () => (
-    <div
-      className="rounded-xl shadow-inner z-10"
-      style={{ 
-        backgroundColor: styling.bgColor,
-        padding: compact ? 4 : 16,
-      }}
-    >
-      <QRCodeSVG
-        value={content || 'https://example.com'}
-        size={qrSize}
-        fgColor={styling.fgColor}
-        bgColor={styling.bgColor}
-        level={styling.level}
-        includeMargin={styling.includeMargin}
-      />
+    <div className="rounded-xl shadow-inner z-10 relative" style={{ padding: compact ? 4 : 16 }}>
+      <QRRenderer content={content} styling={styling} size={qrSize} compact={compact} />
     </div>
   );
 

@@ -139,6 +139,14 @@ export const qrCodeAPI = {
   },
 };
 
+// Uploads API
+export const uploadsAPI = {
+  uploadLogo: async (dataUrl: string) => {
+    const response = await api.post('/uploads/logo', { dataUrl });
+    return response.data;
+  },
+};
+
 // Scans API
 export const scansAPI = {
   // Get all scans for current user

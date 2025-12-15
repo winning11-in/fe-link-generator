@@ -61,6 +61,22 @@ export interface QRStyling {
   size: number;
   level: 'L' | 'M' | 'Q' | 'H';
   includeMargin: boolean;
+  // Advanced styling options
+  dotStyle?: 'square' | 'rounded' | 'dots';
+  cornerStyle?: 'square' | 'dot' | 'extra-rounded';
+  dotScale?: number;
+  fgGradient?: {
+    enabled?: boolean;
+    type?: 'linear' | 'radial';
+    color1?: string;
+    color2?: string;
+    direction?: 'to-bottom' | 'to-right' | 'to-bottom-right' | 'to-top-right';
+  };
+  image?: {
+    url?: string | null;
+    size?: number;
+    margin?: number;
+  };
 }
 
 export interface VCardData {
@@ -89,6 +105,11 @@ export const defaultStyling: QRStyling = {
   size: 200,
   level: 'M',
   includeMargin: true,
+  dotStyle: 'rounded',
+  cornerStyle: 'square',
+  dotScale: 1,
+  fgGradient: { enabled: false, type: 'linear', color1: '#000000', color2: '#8b5cf6', direction: 'to-bottom' },
+  image: { url: null, size: 20, margin: 2 },
 };
 
 export const designTemplates: DesignTemplate[] = [

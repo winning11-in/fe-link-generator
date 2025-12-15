@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Card, Typography, message, Row, Col } from 'antd';
-import { ArrowLeft, Check, Save } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Check, Save } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AppLayout from '../components/layout/AppLayout';
 import TemplateSelector from '../components/qr/TemplateSelector';
 // import TemplateCustomizer from '../components/qr/TemplateCustomizer';
@@ -30,6 +30,9 @@ const CreateQR: React.FC = () => {
   const navigate = useNavigate();
   const { saveDraft, getDraft, clearDraft } = useQRCodes();
   const previewRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+
+  const [restoredDraft, setRestoredDraft] = useState(false);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [template, setTemplate] = useState<QRTemplate>(defaultTemplates[0]);
@@ -40,20 +43,22 @@ const CreateQR: React.FC = () => {
   const [initialized, setInitialized] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // Load draft on mount
+  // Load draft on mount (unless navigation requested a fresh create)
   useEffect(() => {
+    const skipDraft = (location.state as any)?.skipDraft;
     const draft = getDraft();
-    if (draft) {
+    if (draft && !skipDraft) {
       setTemplate(draft.template);
       setStyling(draft.styling);
       setType(draft.type);
       setContent(draft.content);
       setName(draft.name);
       setCurrentStep(draft.currentStep);
+      setRestoredDraft(true);
       message.info('Restored your previous draft');
     }
     setInitialized(true);
-  }, [getDraft]);
+  }, [getDraft, location.state]);
 
   // Auto-save draft whenever any value changes
   useEffect(() => {
@@ -119,6 +124,24 @@ const CreateQR: React.FC = () => {
     message.success('Draft cleared');
   };
 
+  const hasDraft = !!getDraft();
+
+  const handleRestoreDraft = () => {
+    const draft = getDraft();
+    if (!draft) {
+      message.info('No draft available');
+      return;
+    }
+    setTemplate(draft.template);
+    setStyling(draft.styling);
+    setType(draft.type);
+    setContent(draft.content);
+    setName(draft.name);
+    setCurrentStep(draft.currentStep);
+    setRestoredDraft(true);
+    message.success('Draft restored');
+  };
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
@@ -156,21 +179,49 @@ const CreateQR: React.FC = () => {
       <div className="animate-fade-in">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
+          <div className="flex justify-between w-full items-center gap-4">
           <Button
-            type="text"
-            icon={<ArrowLeft size={16} />}
-            onClick={() => navigate('/')}
+            size="large"
+            onClick={handlePrev}
+            disabled={currentStep === 0}
           >
-            Back to Dashboard
+            Previous
           </Button>
-          <div className="flex items-center gap-2">
-            <Text type="secondary" className="text-xs flex items-center gap-1">
-              <Save size={12} /> Auto-saved
-            </Text>
-            <Button size="small" onClick={handleClearDraft}>
-              Clear Draft
+
+          {currentStep === steps.length - 1 ? (
+            <Button
+              type="primary"
+              size="large"
+              onClick={handleSave}
+              loading={saving}
+            >
+              Save QR Code
             </Button>
-          </div>
+          ) : (
+            <Button
+              type="primary"
+              size="large"
+              onClick={handleNext}
+            >
+              Next
+            </Button>
+          )}
+        </div>
+          {!((location.state as any)?.skipDraft) && (
+            <div className="flex items-center gap-2">
+              <Text type="secondary" className="text-xs flex items-center gap-1">
+                <Save size={12} /> Auto-saved
+              </Text>
+              {hasDraft && !restoredDraft && (
+                <Button size="small" onClick={handleRestoreDraft}>
+                  Restore Draft
+                </Button>
+              )}
+              <Button size="small" onClick={handleClearDraft}>
+                Clear Draft
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Custom Steps */}
@@ -240,35 +291,7 @@ const CreateQR: React.FC = () => {
           </Row>
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between">
-          <Button
-            size="large"
-            onClick={handlePrev}
-            disabled={currentStep === 0}
-          >
-            Previous
-          </Button>
-
-          {currentStep === steps.length - 1 ? (
-            <Button
-              type="primary"
-              size="large"
-              onClick={handleSave}
-              loading={saving}
-            >
-              Save QR Code
-            </Button>
-          ) : (
-            <Button
-              type="primary"
-              size="large"
-              onClick={handleNext}
-            >
-              Next
-            </Button>
-          )}
-        </div>
+       
       </div>
     </AppLayout>
   );

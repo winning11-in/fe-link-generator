@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Typography, Input, Segmented } from 'antd';
-import { SearchOutlined, CheckCircleFilled } from '@ant-design/icons';
+import { Typography, Segmented } from 'antd';
+import { CheckCircleFilled } from '@ant-design/icons';
 import type { QRTemplate } from '../../types/qrCode';
 import { defaultTemplates } from '../../types/qrCode';
 
@@ -36,13 +36,11 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   selectedTemplate,
   onSelect,
 }) => {
-  const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
 
   const filteredTemplates = defaultTemplates.filter((template) => {
-    const matchesSearch = template.name.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = category === 'all' || getCategoryForTemplate(template) === category;
-    return matchesSearch && matchesCategory;
+    return matchesCategory;
   });
 
   return (
@@ -55,14 +53,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
       </div>
 
       <div className="mb-6 space-y-4">
-        <Input
-          placeholder="Search templates..."
-          prefix={<SearchOutlined className="text-muted-foreground" />}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          size="large"
-          className="max-w-md"
-        />
+ 
         
         <Segmented
           value={category}

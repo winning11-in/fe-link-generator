@@ -2,9 +2,9 @@ import { Card, Button, Typography, message, Tooltip, Popconfirm, Tag, Space, Row
 import { BarChart3, Trash2, Share2, Edit, ExternalLink, Eye, Download, Image } from "lucide-react";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { QRCodeSVG } from "qrcode.react";
 import html2canvas from "html2canvas";
 import type { QRCode, QRTemplate, QRStyling } from "../../types";
+import QRRenderer from '../qr/QRRenderer';
 
 const { Text, Title } = Typography;
 
@@ -176,8 +176,9 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
   const previewRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
 
-  const template = qr.template || defaultTemplate;
-  const styling = qr.styling || defaultStyling;
+  // Merge stored values with defaults so missing keys won't break rendering
+  const template = { ...defaultTemplate, ...(qr.template || {}) } as QRTemplate;
+  const styling = { ...defaultStyling, ...(qr.styling || {}) } as QRStyling;
 
   const fontWeightMap: Record<string, number> = {
     normal: 400,
@@ -254,26 +255,8 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
       <Row gutter={16} align="middle">
         {/* QR Code Preview */}
         <Col flex="none">
-          <div
-            style={{
-              width: 60,
-              height: 60,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              background: "#f9fafb",
-              borderRadius: 8,
-              padding: 4,
-            }}
-          >
-            <QRCodeSVG
-              value={scanUrl}
-              size={52}
-              fgColor={styling.fgColor}
-              bgColor="#f9fafb"
-              level="L"
-              includeMargin={false}
-            />
+          <div style={{ width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <QRRenderer content={scanUrl} styling={styling} size={52} compact={true} />
           </div>
         </Col>
 
@@ -578,26 +561,9 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
           </p>
 
           {/* QR Code */}
-          <div style={{ 
-            flex: 1, 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            marginTop: 24,
-          }}>
-            <div style={{
-              background: styling.bgColor,
-              padding: 12,
-              borderRadius: 12,
-            }}>
-              <QRCodeSVG
-                value={scanUrl}
-                size={160}
-                fgColor={styling.fgColor}
-                bgColor={styling.bgColor}
-                level={styling.level}
-                includeMargin={false}
-              />
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 24 }}>
+            <div style={{ background: styling.bgColor, padding: 12, borderRadius: 12 }}>
+              <QRRenderer content={scanUrl} styling={styling} size={160} />
             </div>
           </div>
         </div>

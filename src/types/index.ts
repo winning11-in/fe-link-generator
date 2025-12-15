@@ -68,6 +68,22 @@ export interface QRStyling {
   size: number;
   level: 'L' | 'M' | 'Q' | 'H';
   includeMargin: boolean;
+  // Advanced styling extended support
+  dotStyle?: 'square' | 'rounded' | 'dots';
+  cornerStyle?: 'square' | 'dot' | 'extra-rounded';
+  dotScale?: number;
+  fgGradient?: {
+    enabled?: boolean;
+    type?: 'linear' | 'radial';
+    color1?: string;
+    color2?: string;
+    direction?: 'to-bottom' | 'to-right' | 'to-bottom-right' | 'to-top-right';
+  };
+  image?: {
+    url?: string | null;
+    size?: number;
+    margin?: number;
+  };
 }
 
 export interface QRCode {

@@ -22,7 +22,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     <Layout style={{ minHeight: '100vh' }}>
       <Sidebar
         userName={user?.name || 'User'}
-        onCreateClick={() => navigate('/create')}
+        onCreateClick={() => navigate('/create', { state: { skipDraft: true } })}
         onLogout={handleLogout}
       />
       
