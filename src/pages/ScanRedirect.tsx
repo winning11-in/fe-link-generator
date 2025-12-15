@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Spin, Typography, Result } from 'antd';
-import { qrCodeAPI } from '../services/api';
+import { qrCodeAPI, API_URL } from '../services/api';
 
 const { Title, Text } = Typography;
 
@@ -19,9 +19,6 @@ const ScanRedirect = () => {
           return;
         }
 
-        // Track the scan
-        await qrCodeAPI.trackScan(id);
-
         // Get QR code details
         const response = await qrCodeAPI.getOne(id);
         const qrCode = response.qrCode;
@@ -30,6 +27,23 @@ const ScanRedirect = () => {
           setError('QR code not found');
           setLoading(false);
           return;
+        }
+
+        // Try to track the scan (fire-and-forget using sendBeacon or keepalive)
+        try {
+          const trackUrl = `${API_URL}/qrcodes/${id}/scan`;
+          const payload = JSON.stringify({});
+          if (navigator && 'sendBeacon' in navigator) {
+            const blob = new Blob([payload], { type: 'application/json' });
+            // sendBeacon returns boolean; we don't rely on it
+            (navigator as any).sendBeacon(trackUrl, blob);
+          } else {
+            // best-effort fetch with keepalive
+            fetch(trackUrl, { method: 'POST', keepalive: true }).catch(() => {});
+          }
+        } catch (e) {
+          // ignore tracking errors; proceed with redirect
+          console.warn('Scan tracking failed (ignored):', e);
         }
 
         // Redirect to the actual URL
