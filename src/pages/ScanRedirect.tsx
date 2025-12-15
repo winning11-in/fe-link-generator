@@ -26,14 +26,14 @@ const ScanRedirect = () => {
         const response = await qrCodeAPI.getOne(id);
         const qrCode = response.qrCode;
 
-        if (!qrCode || !qrCode.data) {
+        if (!qrCode || !qrCode.content) {
           setError('QR code not found');
           setLoading(false);
           return;
         }
 
         // Redirect to the actual URL
-        window.location.href = qrCode.data;
+        window.location.href = qrCode.content;
       } catch (err: any) {
         console.error('Error tracking scan:', err);
         setError(err.response?.data?.message || 'Failed to process QR code');

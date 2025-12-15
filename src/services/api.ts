@@ -64,31 +64,39 @@ export const qrCodeAPI = {
   // Create new QR code
   create: async (data: {
     type: 'url' | 'text' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'upi' | 'vcard' | 'instagram' | 'facebook' | 'youtube' | 'whatsapp';
-    data: string;
-    title: string;
-    customization?: {
-      qrColor: string;
-      qrColorGradient?: any;
-      bgColor: string;
-      bgColorGradient?: any;
-      bgImage?: string | null;
-      bgImageOpacity?: number;
-      qrSize: number;
-      errorLevel: 'L' | 'M' | 'Q' | 'H';
-      dotStyle: string;
-      cornerSquareStyle: string;
-      cornerDotStyle: string;
-      logo: string | null;
-      logoSize: number;
-      logoPadding: number;
-      removeBackground: boolean;
-      margin?: number;
-      frameOptions?: any;
-      shadow?: boolean;
-      shadowColor?: string;
-      shadowBlur?: number;
+    content: string;
+    name: string;
+    template?: {
+      id: string;
+      name: string;
+      backgroundColor: string;
+      textColor: string;
+      title: string;
+      subtitle: string;
+      titleFontSize?: number;
+      subtitleFontSize?: number;
+      titleFontWeight?: 'normal' | 'medium' | 'semibold' | 'bold';
+      subtitleFontWeight?: 'normal' | 'medium' | 'semibold' | 'bold';
+      fontFamily?: string;
+      textAlign?: 'left' | 'center' | 'right';
+      qrPosition?: 'bottom' | 'center' | 'top';
       borderRadius?: number;
+      showGradient?: boolean;
+      gradientColor?: string;
+      gradientDirection?: 'to-bottom' | 'to-right' | 'to-bottom-right' | 'to-top-right';
+      padding?: number;
+      shadowIntensity?: 'none' | 'light' | 'medium' | 'strong';
+      decorativeStyle?: 'none' | 'circles' | 'dots' | 'lines' | 'geometric';
+      accentColor?: string;
     };
+    styling?: {
+      fgColor: string;
+      bgColor: string;
+      size: number;
+      level: 'L' | 'M' | 'Q' | 'H';
+      includeMargin: boolean;
+    };
+    previewImage?: string;
   }) => {
     const response = await api.post('/qrcodes', data);
     return response.data;

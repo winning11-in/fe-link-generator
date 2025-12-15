@@ -1,247 +1,274 @@
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Typography, Card, Row, Col, Button, message, Spin, Steps } from 'antd';
-import { ArrowLeft } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Button, Card, Typography, message, Row, Col } from 'antd';
+import { ArrowLeft, Check, Save } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import AppLayout from '../components/layout/AppLayout';
-import { templates } from '../components/qr-generator/templates';
-import type { QRTemplate } from '../components/qr-generator/templates';
-import QRPreview from '../components/qr-generator/QRPreviewNew';
-import type { DesignTemplate } from '../components/qr-generator/designTemplates';
-import { QRTypeStep, DesignTemplateStep, ContentStep, CustomizationStep } from '../components/qr-generator/steps';
-import { useQRContent } from '../hooks/useQRContent';
-import { useQRDesign } from '../hooks/useQRDesign';
-import { useQRManager } from '../hooks/useQRManager';
-import { generateQRData } from '../utils/qrDataGenerator';
+import TemplateSelector from '../components/qr/TemplateSelector';
+import TemplateCustomizer from '../components/qr/TemplateCustomizer';
+import QRTypeSelector from '../components/qr/QRTypeSelector';
+import ContentEditor from '../components/qr/ContentEditor';
+import QRDesignTemplates from '../components/qr/QRDesignTemplates';
+import QRStyleEditor from '../components/qr/QRStyleEditor';
+import QRCodePreview from '../components/qr/QRCodePreview';
+import { useQRCodes } from '../hooks/useQRCodes';
+import { qrCodeAPI } from '../services/api';
+import { defaultStyling, defaultTemplates, type QRStyling, type QRTemplate, type QRType } from '../types/qrCode';
+ 
 
-const { Title } = Typography;
+const { Text } = Typography;
 
-const CreateQR = () => {
+const steps = [
+  { title: 'Card Template', description: 'Choose card design (Optional)' },
+  { title: 'QR Type', description: 'Choose QR code type' },
+  { title: 'Content', description: 'Enter your content' },
+  { title: 'QR Design', description: 'Customize QR appearance' },
+  { title: 'Final Touch', description: 'Fine-tune everything' },
+];
+
+const CreateQR: React.FC = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
-  
-  // Template and step state
-  const [selectedTemplate, setSelectedTemplate] = useState<QRTemplate>(templates[0]);
+  const { saveDraft, getDraft, clearDraft } = useQRCodes();
+  const previewRef = useRef<HTMLDivElement>(null);
+
   const [currentStep, setCurrentStep] = useState(0);
-  const [downloadFormat, setDownloadFormat] = useState<'png' | 'svg' | 'jpeg'>('png');
+  const [template, setTemplate] = useState<QRTemplate>(defaultTemplates[0]);
+  const [type, setType] = useState<QRType>('url');
+  const [content, setContent] = useState('https://example.com');
+  const [styling, setStyling] = useState<QRStyling>(defaultStyling);
+  const [name, setName] = useState('');
+  const [initialized, setInitialized] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  // Custom hooks for state management
-  const contentState = useQRContent();
-  const designState = useQRDesign();
+  // Load draft on mount
+  useEffect(() => {
+    const draft = getDraft();
+    if (draft) {
+      setTemplate(draft.template);
+      setStyling(draft.styling);
+      setType(draft.type);
+      setContent(draft.content);
+      setName(draft.name);
+      setCurrentStep(draft.currentStep);
+      message.info('Restored your previous draft');
+    }
+    setInitialized(true);
+  }, [getDraft]);
 
-  // Generate QR data function
-  const generateQRDataFn = () => generateQRData({
-    templateType: selectedTemplate.type,
-    qrData: contentState.qrData,
-    emailTo: contentState.emailTo,
-    emailSubject: contentState.emailSubject,
-    emailBody: contentState.emailBody,
-    phoneNumber: contentState.phoneNumber,
-    smsNumber: contentState.smsNumber,
-    smsMessage: contentState.smsMessage,
-    wifiSSID: contentState.wifiSSID,
-    wifiPassword: contentState.wifiPassword,
-    wifiEncryption: contentState.wifiEncryption,
-    latitude: contentState.latitude,
-    longitude: contentState.longitude,
-    upiID: contentState.upiID,
-    upiName: contentState.upiName,
-    upiAmount: contentState.upiAmount,
-    upiNote: contentState.upiNote,
-    socialUsername: contentState.socialUsername,
-    whatsappNumber: contentState.whatsappNumber,
-    whatsappMessage: contentState.whatsappMessage,
-    vcardFirstName: contentState.vcardFirstName,
-    vcardLastName: contentState.vcardLastName,
-    vcardOrganization: contentState.vcardOrganization,
-    vcardTitle: contentState.vcardTitle,
-    vcardPhone: contentState.vcardPhone,
-    vcardEmail: contentState.vcardEmail,
-    vcardWebsite: contentState.vcardWebsite,
-    vcardAddress: contentState.vcardAddress,
-  });
-
-  // QR Manager hook for loading and saving
-  const { loading, fetchingQR, isEditMode, handleSaveQR } = useQRManager({
-    id,
-    contentState,
-    designState,
-    selectedTemplate,
-    setSelectedTemplate,
-    generateQRDataFn,
-  });
-
-  const handleApplyDesignTemplate = (template: DesignTemplate) => {
-    designState.applyDesignTemplate(template.settings);
-    message.success(`Applied ${template.name} template!`);
-  };
+  // Auto-save draft whenever any value changes
+  useEffect(() => {
+    if (!initialized) return;
+    
+    const draft = {
+      template,
+      styling,
+      type,
+      content,
+      name,
+      currentStep,
+    };
+    saveDraft(draft);
+  }, [template, styling, type, content, name, currentStep, saveDraft, initialized]);
 
   const handleNext = () => {
-    if (currentStep === 0 && !selectedTemplate) {
-      message.warning('Please select a QR type');
-      return;
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
     }
-    if (currentStep === 2 && (!contentState.title || !generateQRDataFn())) {
-      message.warning('Please fill in all required fields');
-      return;
-    }
-    setCurrentStep(currentStep + 1);
   };
 
-  const handlePrevious = () => {
-    setCurrentStep(currentStep - 1);
+  const handlePrev = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!name.trim()) {
+      message.error('Please enter a name for your QR code');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      await qrCodeAPI.create({
+        type,
+        content,
+        name: name.trim(),
+        template,
+        styling,
+      });
+
+      clearDraft();
+      message.success('QR Code saved successfully!');
+      navigate('/dashboard');
+    } catch (error: any) {
+      message.error(error.response?.data?.message || 'Failed to save QR code');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleClearDraft = () => {
+    clearDraft();
+    setTemplate(defaultTemplates[0]);
+    setStyling(defaultStyling);
+    setType('url');
+    setContent('https://example.com');
+    setName('');
+    setCurrentStep(0);
+    message.success('Draft cleared');
+  };
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 0:
+        return <TemplateSelector selectedTemplate={template} onSelect={setTemplate} />;
+      case 1:
+        return <QRTypeSelector selectedType={type} onSelect={setType} />;
+      case 2:
+        return (
+          <ContentEditor
+            type={type}
+            content={content}
+            name={name}
+            onNameChange={setName}
+            onContentChange={setContent}
+          />
+        );
+      case 3:
+        return <QRDesignTemplates styling={styling} onStyleChange={setStyling} />;
+      case 4:
+        return (
+          <div className="space-y-6">
+            <QRStyleEditor styling={styling} onStyleChange={setStyling} />
+            <Card title="Card Customization" size="small">
+              <TemplateCustomizer template={template} onTemplateChange={setTemplate} />
+            </Card>
+          </div>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
     <AppLayout>
-      {fetchingQR ? (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-          <Spin size="large" tip="Loading QR Code..." />
-        </div>
-      ) : (
-        <div style={{ margin: '0 auto' }}>
+      <div className="animate-fade-in">
+        {/* Header */}
+        <div className="mb-6 flex items-center justify-between">
           <Button
-            icon={<ArrowLeft size={18} />}
-            onClick={() => navigate('/dashboard')}
-            style={{ marginBottom: 16 }}
+            type="text"
+            icon={<ArrowLeft size={16} />}
+            onClick={() => navigate('/')}
           >
             Back to Dashboard
           </Button>
-
-          {/* Page Header */}
-          <div style={{ marginBottom: 24 }}>
-            <Title level={2} style={{ marginBottom: 8 }}>
-              {isEditMode ? 'Edit QR Code' : 'Create QR Code'}
-            </Title>
+          <div className="flex items-center gap-2">
+            <Text type="secondary" className="text-xs flex items-center gap-1">
+              <Save size={12} /> Auto-saved
+            </Text>
+            <Button size="small" onClick={handleClearDraft}>
+              Clear Draft
+            </Button>
           </div>
+        </div>
 
-          <Row gutter={[32, 32]}>
-            {/* Left Column - Step-based Form */}
-            <Col xs={24} lg={14}>
-              <Card
-                style={{
-                  borderRadius: 12,
-                  border: '1px solid #e5e7eb',
-                }}
-                bodyStyle={{ padding: 24 }}
-              >
-                {/* Steps Indicator */}
-                <Steps
-                  current={currentStep}
-                  onChange={setCurrentStep}
-                  style={{ marginBottom: 32 }}
-                  items={[
-                    { title: 'QR Type' },
-                    { title: 'Design Template' },
-                    { title: 'Content' },
-                    { title: 'Customize' },
-                  ]}
-                />
-
-                {/* Step Content */}
-                <div style={{ minHeight: '400px' }}>
-                  {/* Step 1: QR Type Selection */}
-                  {currentStep === 0 && (
-                    <QRTypeStep
-                      selectedTemplate={selectedTemplate}
-                      onTemplateSelect={setSelectedTemplate}
-                      isEditMode={isEditMode}
-                    />
-                  )}
-
-                  {/* Step 2: Design Template Selection */}
-                  {currentStep === 1 && (
-                    <DesignTemplateStep onTemplateSelect={handleApplyDesignTemplate} />
-                  )}
-
-                  {/* Step 3: Content Entry */}
-                  {currentStep === 2 && (
-                    <ContentStep
-                      selectedTemplate={selectedTemplate}
-                      downloadFormat={downloadFormat}
-                      setDownloadFormat={setDownloadFormat}
-                      {...contentState}
-                    />
-                  )}
-
-                  {/* Step 4: Customization */}
-                  {currentStep === 3 && (
-                    <CustomizationStep {...designState} />
-                  )}
+        {/* Custom Steps */}
+        <Card className="mb-6">
+          <div className="flex items-center justify-between">
+            {steps.map((step, index) => (
+              <React.Fragment key={index}>
+                <div className="flex flex-col items-center">
+                  <div className="flex items-center gap-2 mb-1">
+                    {index < currentStep ? (
+                      <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                        <Check size={12} className="text-white" />
+                      </div>
+                    ) : index === currentStep ? (
+                      <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                        <span className="text-white text-xs font-medium">{index + 1}</span>
+                      </div>
+                    ) : (
+                      <div className="w-6 h-6 rounded-full border-2 border-muted-foreground/30 flex items-center justify-center">
+                        <span className="text-muted-foreground text-xs font-medium">{index + 1}</span>
+                      </div>
+                    )}
+                    <span className={`font-medium text-sm ${index <= currentStep ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {step.title}
+                    </span>
+                  </div>
+                  <Text type="secondary" className="text-xs hidden sm:block">
+                    {step.description}
+                  </Text>
                 </div>
+                {index < steps.length - 1 && (
+                  <div className={`flex-1 h-0.5 mx-2 ${index < currentStep ? 'bg-primary' : 'bg-muted'}`} />
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+        </Card>
 
-                {/* Navigation Buttons */}
-                <div style={{ marginTop: 32, display: 'flex', justifyContent: 'space-between' }}>
-                  <Button
-                    size="large"
-                    onClick={handlePrevious}
-                    disabled={currentStep === 0}
-                  >
-                    Previous
-                  </Button>
-                  {currentStep < 3 ? (
-                    <Button
-                      type="primary"
-                      size="large"
-                      onClick={handleNext}
-                      style={{
-                        background: '#6366f1',
-                        borderColor: '#6366f1',
-                      }}
-                    >
-                      Next
-                    </Button>
-                  ) : (
-                    <Button
-                      type="primary"
-                      size="large"
-                      loading={loading}
-                      onClick={handleSaveQR}
-                      style={{
-                        background: '#10b981',
-                        borderColor: '#10b981',
-                      }}
-                    >
-                      {isEditMode ? 'Update QR Code' : 'Save QR Code'}
-                    </Button>
-                  )}
+        {/* Content Area with Preview */}
+        <div className="min-h-[500px] mb-6">
+          <Row gutter={[24, 24]}>
+            <Col xs={24} lg={16}>
+              <Card className="min-h-[500px]">
+                {renderStepContent()}
+              </Card>
+            </Col>
+            <Col xs={24} lg={8}>
+              <Card 
+                title="Live Preview" 
+                className="sticky top-6"
+              >
+                <div className="flex flex-col items-center">
+                  <QRCodePreview
+                    ref={previewRef}
+                    content={content}
+                    template={template}
+                    styling={styling}
+                    editable={true}
+                    onTemplateChange={setTemplate}
+                  />
+                  <Text type="secondary" className="text-xs mt-4">
+                    Click text to edit inline
+                  </Text>
                 </div>
               </Card>
             </Col>
-
-            {/* Right Column - Preview (Always Visible) */}
-            <Col xs={24} lg={10}>
-              <QRPreview
-                qrData={generateQRDataFn() || 'https://example.com'}
-                qrColor={designState.qrColor}
-                qrColorGradient={designState.qrColorGradient}
-                bgColor={designState.bgColor}
-                bgColorGradient={designState.bgColorGradient}
-                bgImage={designState.bgImage}
-                bgImageOpacity={designState.bgImageOpacity}
-                qrSize={designState.qrSize}
-                errorLevel={designState.errorLevel}
-                dotStyle={designState.dotStyle}
-                cornerSquareStyle={designState.cornerSquareStyle}
-                cornerDotStyle={designState.cornerDotStyle}
-                logo={designState.logo}
-                logoSize={designState.logoSize}
-                logoPadding={designState.logoPadding}
-                removeBackground={designState.removeBackground}
-                margin={designState.margin}
-                frameOptions={designState.frameOptions}
-                shadow={designState.shadow}
-                shadowColor={designState.shadowColor}
-                shadowBlur={designState.shadowBlur}
-                borderRadius={designState.borderRadius}
-                title={contentState.title}
-                loading={loading}
-                onSave={handleSaveQR}
-                saveButtonText={isEditMode ? 'Update QR Code' : 'Save QR Code'}
-              />
-            </Col>
           </Row>
         </div>
-      )}
+
+        {/* Navigation Buttons */}
+        <div className="flex justify-between">
+          <Button
+            size="large"
+            onClick={handlePrev}
+            disabled={currentStep === 0}
+          >
+            Previous
+          </Button>
+
+          {currentStep === steps.length - 1 ? (
+            <Button
+              type="primary"
+              size="large"
+              onClick={handleSave}
+              loading={saving}
+            >
+              Save QR Code
+            </Button>
+          ) : (
+            <Button
+              type="primary"
+              size="large"
+              onClick={handleNext}
+            >
+              Next
+            </Button>
+          )}
+        </div>
+      </div>
     </AppLayout>
   );
 };

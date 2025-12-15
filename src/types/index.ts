@@ -31,55 +31,56 @@ export interface Scan {
   updatedAt: string;
 }
 
-export interface GradientColor {
-  type: 'solid' | 'linear' | 'radial';
-  color?: string;
-  gradient?: {
-    colorStops: Array<{ offset: number; color: string }>;
-    rotation?: number;
-  };
+// Card Template Configuration
+export interface QRTemplate {
+  id: string;
+  name: string;
+  backgroundColor: string;
+  textColor: string;
+  title: string;
+  subtitle: string;
+  titleFontSize?: number;
+  subtitleFontSize?: number;
+  titleFontWeight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  subtitleFontWeight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  fontFamily?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  qrPosition?: 'bottom' | 'center' | 'top';
+  borderRadius?: number;
+  showGradient?: boolean;
+  gradientColor?: string;
+  gradientDirection?: 'to-bottom' | 'to-right' | 'to-bottom-right' | 'to-top-right';
+  padding?: number;
+  titleLetterSpacing?: number;
+  subtitleLetterSpacing?: number;
+  showBorder?: boolean;
+  borderColor?: string;
+  borderWidth?: number;
+  shadowIntensity?: 'none' | 'light' | 'medium' | 'strong';
+  decorativeStyle?: 'none' | 'circles' | 'dots' | 'lines' | 'geometric';
+  accentColor?: string;
 }
 
-export interface FrameOptions {
-  enabled: boolean;
-  style: 'none' | 'basic' | 'rounded' | 'banner';
-  color: string;
-  text?: string;
-  textColor?: string;
+// QR Code Styling
+export interface QRStyling {
+  fgColor: string;
+  bgColor: string;
+  size: number;
+  level: 'L' | 'M' | 'Q' | 'H';
+  includeMargin: boolean;
 }
 
 export interface QRCode {
   _id: string;
   user: string;
   type: 'url' | 'text' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'upi' | 'vcard' | 'instagram' | 'facebook' | 'youtube' | 'whatsapp';
-  data: string;
-  title: string;
+  content: string;
+  name: string;
   scanCount: number;
-  isActive: boolean;
+  status: 'active' | 'inactive';
   previewImage?: string;
-  customization?: {
-    qrColor: string;
-    qrColorGradient?: GradientColor;
-    bgColor: string;
-    bgColorGradient?: GradientColor;
-    bgImage?: string;
-    bgImageOpacity?: number;
-    qrSize: number;
-    errorLevel: 'L' | 'M' | 'Q' | 'H';
-    dotStyle: string;
-    cornerSquareStyle: string;
-    cornerDotStyle: string;
-    logo: string | null;
-    logoSize: number;
-    logoPadding: number;
-    removeBackground: boolean;
-    margin?: number;
-    frameOptions?: FrameOptions;
-    shadow?: boolean;
-    shadowColor?: string;
-    shadowBlur?: number;
-    borderRadius?: number;
-  };
+  template?: QRTemplate;
+  styling?: QRStyling;
   createdAt: string;
   updatedAt: string;
 }
