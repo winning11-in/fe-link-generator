@@ -169,7 +169,7 @@ const QRAnalytics = () => {
             {/* Page Header */}
             <div style={{ marginBottom: 16 }}>
               <Title level={2} style={{ marginBottom: 8 }}>
-                {qrCode?.title}
+                {qrCode?.name}
               </Title>
               <Text type="secondary" style={{ fontSize: 16 }}>
                 Total Scans: {qrCode?.scanCount || 0}

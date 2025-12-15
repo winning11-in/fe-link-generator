@@ -1,9 +1,8 @@
 import { Card, Button, Typography, message, Tooltip, Popconfirm, Tag, Space, Row, Col, Pagination, Skeleton } from "antd";
-import { BarChart3, Trash2, Download, Share2, Edit, ExternalLink } from "lucide-react";
+import { BarChart3, Trash2, Share2, Edit, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { QRCode } from "../../types";
-import { useQRDownload } from "../../hooks/useQRDownload";
 
 const { Text, Title } = Typography;
 
@@ -25,8 +24,8 @@ const QRCodeList = ({ qrCodes, onAnalytics, onDelete, loading = false }: QRCodeL
     if (navigator.share) {
       try {
         await navigator.share({
-          title: qr.title,
-          text: `Check out this QR code: ${qr.title}`,
+          title: qr.name,
+          text: `Check out this QR code: ${qr.name}`,
           url: scanUrl,
         });
       } catch {
@@ -144,7 +143,6 @@ interface QRCodeListItemProps {
 
 const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCodeListItemProps) => {
   const scanUrl = `${window.location.origin}/scan/${qr._id}`;
-  const { handleDownload } = useQRDownload({ qr, scanUrl });
 
   return (
     <Card
@@ -183,7 +181,7 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
             {qr.previewImage ? (
               <img
                 src={qr.previewImage}
-                alt={qr.title}
+                alt={qr.name}
                 style={{
                   width: "100%",
                   height: "100%",
@@ -223,9 +221,9 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
                   flex: 1,
                   lineHeight: 1.4,
                 }}
-                title={qr.title}
+                title={qr.name}
               >
-                {qr.title}
+                {qr.name}
               </Title>
               <Tag 
                 color="blue" 
@@ -244,7 +242,7 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
               </Tag>
             </div>
 
-            {/* Data/URL */}
+            {/* Content/URL */}
             <Text
               type="secondary"
               style={{
@@ -258,9 +256,9 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
                 lineHeight: 1.4,
                 minHeight: 16,
               }}
-              title={qr.data}
+              title={qr.content}
             >
-              {qr.data}
+              {qr.content}
             </Text>
 
             {/* Stats */}
@@ -292,7 +290,7 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
                 </Text>
               </div>
               <Tag 
-                color={qr.isActive ? "green" : "red"} 
+                color={qr.status === 'active' ? "green" : "red"} 
                 style={{ 
                   fontSize: 11, 
                   margin: 0,
@@ -303,7 +301,7 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
                   fontWeight: 500
                 }}
               >
-                {qr.isActive ? "Active" : "Inactive"}
+                {qr.status === 'active' ? "Active" : "Inactive"}
               </Tag>
               <Text type="secondary" style={{ 
                 fontSize: 11,
@@ -337,23 +335,7 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
               />
             </Tooltip>
 
-            <Tooltip title="Download">
-              <Button
-                type="text"
-                size="small"
-                icon={<Download size={14} />}
-                onClick={handleDownload}
-                style={{ 
-                  borderRadius: 8,
-                  width: 32,
-                  height: 32,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: 0
-                }}
-              />
-            </Tooltip>
+         
 
             <Tooltip title="Share">
               <Button
