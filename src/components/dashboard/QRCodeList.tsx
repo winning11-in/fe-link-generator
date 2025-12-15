@@ -267,7 +267,7 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
             }}
           >
             <QRCodeSVG
-              value={qr.content || 'https://example.com'}
+              value={scanUrl}
               size={52}
               fgColor={styling.fgColor}
               bgColor="#f9fafb"
@@ -591,7 +591,7 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
               borderRadius: 12,
             }}>
               <QRCodeSVG
-                value={qr.content || 'https://example.com'}
+                value={scanUrl}
                 size={160}
                 fgColor={styling.fgColor}
                 bgColor={styling.bgColor}
