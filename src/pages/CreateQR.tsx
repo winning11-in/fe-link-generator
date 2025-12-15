@@ -4,7 +4,7 @@ import { ArrowLeft, Check, Save } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AppLayout from '../components/layout/AppLayout';
 import TemplateSelector from '../components/qr/TemplateSelector';
-import TemplateCustomizer from '../components/qr/TemplateCustomizer';
+// import TemplateCustomizer from '../components/qr/TemplateCustomizer';
 import QRTypeSelector from '../components/qr/QRTypeSelector';
 import ContentEditor from '../components/qr/ContentEditor';
 import QRDesignTemplates from '../components/qr/QRDesignTemplates';
@@ -141,9 +141,9 @@ const CreateQR: React.FC = () => {
         return (
           <div className="space-y-6">
             <QRStyleEditor styling={styling} onStyleChange={setStyling} />
-            <Card title="Card Customization" size="small">
+            {/* <Card title="Card Customization" size="small">
               <TemplateCustomizer template={template} onTemplateChange={setTemplate} />
-            </Card>
+            </Card> */}
           </div>
         );
       default:
