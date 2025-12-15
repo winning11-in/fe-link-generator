@@ -12,7 +12,7 @@ import QRStyleEditor from '../components/qr/QRStyleEditor';
 import QRCodePreview from '../components/qr/QRCodePreview';
 import { useQRCodes } from '../hooks/useQRCodes';
 import { qrCodeAPI } from '../services/api';
-import { defaultStyling, defaultTemplates, type QRStyling, type QRTemplate, type QRType } from '../types/qrCode';
+import { defaultStyling, defaultTemplates, type QRStyling, type QRTemplate, type QRType } from '../types/qrcode';
  
 
 const { Text } = Typography;
