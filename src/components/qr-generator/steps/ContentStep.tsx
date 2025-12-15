@@ -1,4 +1,4 @@
-import { Typography, Space, Input, Segmented } from 'antd';
+import { Typography, Space, Input } from 'antd';
 import ContentForm from '../ContentFormNew';
 import type { QRTemplate } from '../templates';
 
@@ -8,8 +8,7 @@ interface ContentStepProps {
   selectedTemplate: QRTemplate;
   title: string;
   setTitle: (value: string) => void;
-  downloadFormat: 'png' | 'svg' | 'jpeg';
-  setDownloadFormat: (value: 'png' | 'svg' | 'jpeg') => void;
+   
   // Content fields props
   qrData: string;
   setQrData: (value: string) => void;
@@ -72,8 +71,7 @@ const ContentStep = (props: ContentStepProps) => {
     selectedTemplate,
     title,
     setTitle,
-    downloadFormat,
-    setDownloadFormat,
+ 
     ...contentFormProps
   } = props;
 
@@ -104,20 +102,7 @@ const ContentStep = (props: ContentStepProps) => {
           />
         </div>
         <div>
-          <Text strong style={{ marginBottom: 8, display: 'block' }}>
-            Format
-          </Text>
-          <Segmented
-            options={[
-              { label: 'PNG', value: 'png' },
-              { label: 'SVG', value: 'svg' },
-              { label: 'JPEG', value: 'jpeg' },
-            ]}
-            value={downloadFormat}
-            onChange={(value) => setDownloadFormat(value as 'png' | 'svg' | 'jpeg')}
-            block
-            size="large"
-          />
+          
         </div>
       </Space>
     </div>

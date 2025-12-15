@@ -12,6 +12,7 @@
   "dependencies": {
     "antd": "^6.1.0",
     "axios": "^1.13.2",
+    "html-to-image": "^1.11.13",
     "lucide-react": "^0.556.0",
     "qr-code-styling": "^1.9.2",
     "qrcode.react": "^4.2.0",
