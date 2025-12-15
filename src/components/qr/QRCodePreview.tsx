@@ -1,9 +1,10 @@
-import React, { useState, forwardRef } from 'react';
+import { useState, forwardRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Input, ColorPicker, Slider, Popover	 } from 'antd';
-import { Pencil, Type, Palette, Move } from 'lucide-react';
+import { Pencil, Type} from 'lucide-react';
 import type { Color } from 'antd/es/color-picker';
-import { QRTemplate, QRStyling } from '../../types/qrcode';
+import type { QRTemplate } from '../../types';
+import type { QRStyling } from '../../types/qrCode';
 
 interface QRCodePreviewProps {
   content: string;
@@ -36,7 +37,6 @@ const QRCodePreview = forwardRef<HTMLDivElement, QRCodePreviewProps>(({
   editable = false,
   onTemplateChange,
 }, ref) => {
-  const [editingField, setEditingField] = useState<'title' | 'subtitle' | null>(null);
   const [hovered, setHovered] = useState(false);
   const [showTitleEditor, setShowTitleEditor] = useState(false);
   const [showSubtitleEditor, setShowSubtitleEditor] = useState(false);
@@ -74,15 +74,15 @@ const QRCodePreview = forwardRef<HTMLDivElement, QRCodePreviewProps>(({
     }
   };
 
-  const handleBlur = () => {
-    setEditingField(null);
-  };
+  // const handleBlur = () => {
+  //   setEditingField(null);
+  // };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      setEditingField(null);
-    }
-  };
+  // const handleKeyDown = (e: React.KeyboardEvent) => {
+  //   if (e.key === 'Enter') {
+  //     setEditingField(null);
+  //   }
+  // };
 
   const gradientDirection = gradientDirectionMap[template.gradientDirection || 'to-bottom-right'];
   const backgroundStyle = template.showGradient && template.gradientColor
@@ -190,7 +190,6 @@ const QRCodePreview = forwardRef<HTMLDivElement, QRCodePreviewProps>(({
           max={40}
           value={template.titleFontSize || 24}
           onChange={(value) => onTemplateChange?.({ ...template, titleFontSize: value })}
-          size="small"
         />
       </div>
       <div>
@@ -222,7 +221,6 @@ const QRCodePreview = forwardRef<HTMLDivElement, QRCodePreviewProps>(({
           max={24}
           value={template.subtitleFontSize || 14}
           onChange={(value) => onTemplateChange?.({ ...template, subtitleFontSize: value })}
-          size="small"
         />
       </div>
     </div>
