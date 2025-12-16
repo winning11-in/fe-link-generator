@@ -542,7 +542,6 @@ const QRCodeListItem = ({ qr, onAnalytics, onDelete, onShare, navigate }: QRCode
             textAlign: template.textAlign || 'center',
             color: template.textColor,
             width: '100%',
-            fontStyle: 'italic',
           }}>
             {template.title || qr.name}
           </h2>
