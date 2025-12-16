@@ -213,7 +213,9 @@ const CardEditor: React.FC<CardEditorProps> = ({
             }}
             style={{
               ...elementStyle,
-              backgroundColor: element.fill,
+              backgroundColor: element.fill && !/(gradient|radial|linear)/i.test(String(element.fill)) ? element.fill : undefined,
+              backgroundImage: element.fill && /(gradient|radial|linear)/i.test(String(element.fill)) ? element.fill : undefined,
+              backgroundRepeat: element.fill && /(gradient|radial|linear)/i.test(String(element.fill)) ? 'repeat' : undefined,
               borderRadius: element.shapeType === 'circle' ? '50%' : (element.cornerRadius || 0),
               outline: isEditing ? '2px solid #1890ff' : 'none'
             }}

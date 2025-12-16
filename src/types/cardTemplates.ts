@@ -1,7 +1,8 @@
 export interface CardTemplate {
   id: string;
   name: string;
-  category: 'business' | 'eco' | 'tech' | 'modern' | 'minimal' | 'creative';
+  // categories are open-ended; add new categories here if needed
+  category: 'business' | 'eco' | 'tech' | 'modern' | 'minimal' | 'creative' | 'event' | 'social';
   preview: string;
   settings: {
     width: number;

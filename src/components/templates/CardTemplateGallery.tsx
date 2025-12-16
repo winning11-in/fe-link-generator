@@ -3,6 +3,7 @@ import { Card, Row, Col, Typography, Button, Tag, Input, Select } from 'antd';
 import { Edit3 } from 'lucide-react';
 import type { CardTemplate } from '../../types/cardTemplates';
 import { cardTemplates } from './cardTemplates';
+import TemplatePreviewMini from './TemplatePreviewMini';
 
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -27,7 +28,9 @@ const CardTemplateGallery: React.FC<CardTemplateGalleryProps> = ({
     { value: 'tech', label: 'Technology' },
     { value: 'modern', label: 'Modern' },
     { value: 'minimal', label: 'Minimal' },
-    { value: 'creative', label: 'Creative' }
+    { value: 'creative', label: 'Creative' },
+    { value: 'event', label: 'Event' },
+    { value: 'social', label: 'Social' }
   ];
 
   const filteredTemplates = cardTemplates.filter(template => {
@@ -50,95 +53,9 @@ const CardTemplateGallery: React.FC<CardTemplateGalleryProps> = ({
   };
 
   const renderTemplatePreview = (template: CardTemplate) => {
-    const previewStyle: React.CSSProperties = {
-      width: '100%',
-      height: 200,
-      backgroundColor: template.settings.backgroundColor,
-      backgroundImage: template.settings.gradient 
-        ? `linear-gradient(${template.settings.gradient.direction}, ${template.settings.gradient.colors.join(', ')})`
-        : undefined,
-      borderRadius: template.settings.borderRadius / 2,
-      position: 'relative',
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 16,
-      cursor: 'pointer',
-      transition: 'all 0.3s ease',
-      border: selectedTemplateId === template.id ? '3px solid #1890ff' : '1px solid #f0f0f0'
-    };
-
-    // Find main elements for preview
-    const titleElement = template.elements.find(el => 
-      el.type === 'text' && (el.id.includes('title') || el.id.includes('heading'))
-    );
-    const qrElement = template.elements.find(el => el.type === 'qrcode');
-
     return (
-      <div style={previewStyle} onClick={() => onSelectTemplate(template)}>
-        {/* Preview title */}
-        {titleElement && (
-          <div
-            style={{
-              fontSize: titleElement.fontSize ? titleElement.fontSize / 2 : 14,
-              fontWeight: titleElement.fontWeight,
-              color: titleElement.color,
-              marginBottom: 8,
-              textAlign: 'center'
-            }}
-          >
-            {titleElement.text}
-          </div>
-        )}
-        
-        {/* QR placeholder */}
-        {qrElement && (
-          <div
-            style={{
-              width: qrElement.size.width / 3,
-              height: qrElement.size.height / 3,
-              backgroundColor: 'rgba(255,255,255,0.9)',
-              borderRadius: qrElement.qrSettings?.cornerRadius || 4,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: 8
-            }}
-          >
-            <div
-              style={{
-                width: '80%',
-                height: '80%',
-                backgroundColor: '#000000',
-                opacity: 0.8,
-                background: `
-                  repeating-conic-gradient(#000 0% 25%, transparent 0% 50%) 50% / 8px 8px,
-                  repeating-conic-gradient(#000 0% 25%, transparent 0% 50%) 54px 54px / 8px 8px
-                `
-              }}
-            />
-          </div>
-        )}
-        
-        {/* Template name overlay */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 8,
-            left: 8,
-            right: 8,
-            backgroundColor: 'rgba(0,0,0,0.7)',
-            color: 'white',
-            padding: '4px 8px',
-            borderRadius: 4,
-            fontSize: 11,
-            textAlign: 'center'
-          }}
-        >
-          {template.name}
-        </div>
+      <div onClick={() => onSelectTemplate(template)}>
+        <TemplatePreviewMini template={template} scale={0.42} />
       </div>
     );
   };

@@ -1,5 +1,9 @@
 import type { CardTemplate } from "../../types/cardTemplates";
 
+// NOTE: Templates are fully data-driven. Add new templates to this list and the
+// UI will render them automatically (no component changes required). Use
+// `elements` to describe text, shapes, qrcode, images, and gradients/patterns.
+
 export const cardTemplates: CardTemplate[] = [
   {
     id: 'eco-friendly',
@@ -504,6 +508,314 @@ export const cardTemplates: CardTemplate[] = [
         fontSize: 12,
         fontWeight: 'normal',
         color: '#999999',
+        textAlign: 'center'
+      }
+    ]
+  },
+  {
+    id: 'event-invite',
+    name: 'Event Invite',
+    category: 'modern',
+    preview: '/templates/event-invite.svg',
+    settings: {
+      width: 400,
+      height: 600,
+      backgroundColor: '#0b1720',
+      gradient: {
+        type: 'linear',
+        colors: ['#0b1720', '#0f2937'],
+        direction: '180deg'
+      },
+      padding: 32,
+      borderRadius: 16,
+      shadow: true,
+      shadowColor: 'rgba(0,0,0,0.5)',
+      shadowBlur: 36,
+      shadowOffset: { x: 0, y: 18 }
+    },
+    elements: [
+      {
+        id: 'invite-label',
+        type: 'text',
+        position: { x: 50, y: 36 },
+        size: { width: 300, height: 20 },
+        zIndex: 2,
+        text: "YOU'RE INVITED",
+        fontFamily: 'Inter',
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#FDE68A',
+        textAlign: 'center',
+        letterSpacing: 1.2
+      },
+      {
+        id: 'event-name',
+        type: 'text',
+        position: { x: 50, y: 68 },
+        size: { width: 300, height: 46 },
+        zIndex: 2,
+        text: 'Event Name',
+        fontFamily: 'Inter',
+        fontSize: 28,
+        fontWeight: '700',
+        color: '#FFFFFF',
+        textAlign: 'center'
+      },
+      {
+        id: 'date-pill',
+        type: 'shape',
+        position: { x: 120, y: 130 },
+        size: { width: 160, height: 36 },
+        zIndex: 2,
+        shapeType: 'rectangle',
+        fill: 'linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+        stroke: 'none',
+        cornerRadius: 18
+      },
+      {
+        id: 'time-text',
+        type: 'text',
+        position: { x: 50, y: 190 },
+        size: { width: 300, height: 24 },
+        zIndex: 2,
+        text: '7:00 PM',
+        fontFamily: 'Inter',
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#FFFFFF',
+        textAlign: 'center'
+      },
+      {
+        id: 'description',
+        type: 'text',
+        position: { x: 50, y: 224 },
+        size: { width: 300, height: 40 },
+        zIndex: 2,
+        text: 'Join us for an unforgettable celebration!',
+        fontFamily: 'Inter',
+        fontSize: 12,
+        fontWeight: '300',
+        color: 'rgba(255,255,255,0.85)',
+        textAlign: 'center'
+      },
+      {
+        id: 'qr-background',
+        type: 'shape',
+        position: { x: 75, y: 270 },
+        size: { width: 250, height: 250 },
+        zIndex: 1,
+        shapeType: 'rectangle',
+        fill: '#FFFFFF',
+        stroke: 'none',
+        cornerRadius: 20
+      },
+      {
+        id: 'qrcode',
+        type: 'qrcode',
+        position: { x: 95, y: 290 },
+        size: { width: 210, height: 210 },
+        zIndex: 2,
+        qrSettings: { errorLevel: 'M', margin: 0, cornerRadius: 12 }
+      }
+    ]
+  },
+  {
+    id: 'business-card-compact',
+    name: 'Business Card Compact',
+    category: 'business',
+    preview: '/templates/business-card.svg',
+    settings: {
+      width: 520,
+      height: 280,
+      backgroundColor: '#0f1724',
+      gradient: {
+        type: 'linear',
+        colors: ['#071226', '#0f1724'],
+        direction: '90deg'
+      },
+      padding: 20,
+      borderRadius: 12,
+      shadow: true,
+      shadowColor: 'rgba(0,0,0,0.35)',
+      shadowBlur: 18,
+      shadowOffset: { x: 0, y: 8 }
+    },
+    elements: [
+      {
+        id: 'left-name',
+        type: 'text',
+        position: { x: 28, y: 36 },
+        size: { width: 260, height: 32 },
+        zIndex: 2,
+        text: 'Your Name',
+        fontFamily: 'Inter',
+        fontSize: 22,
+        fontWeight: '700',
+        color: '#FFFFFF',
+        textAlign: 'left'
+      },
+      {
+        id: 'job-title',
+        type: 'text',
+        position: { x: 28, y: 72 },
+        size: { width: 260, height: 22 },
+        zIndex: 2,
+        text: 'Job Title',
+        fontFamily: 'Inter',
+        fontSize: 14,
+        fontWeight: '400',
+        color: 'rgba(255,255,255,0.85)',
+        textAlign: 'left'
+      },
+      {
+        id: 'company',
+        type: 'text',
+        position: { x: 28, y: 100 },
+        size: { width: 260, height: 22 },
+        zIndex: 2,
+        text: 'Company Name',
+        fontFamily: 'Inter',
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#06b6d4',
+        textAlign: 'left'
+      },
+      {
+        id: 'contact-1',
+        type: 'text',
+        position: { x: 28, y: 132 },
+        size: { width: 260, height: 18 },
+        zIndex: 2,
+        text: 'email@example.com',
+        fontFamily: 'Inter',
+        fontSize: 12,
+        fontWeight: '400',
+        color: 'rgba(255,255,255,0.85)',
+        textAlign: 'left'
+      },
+      {
+        id: 'contact-2',
+        type: 'text',
+        position: { x: 28, y: 154 },
+        size: { width: 260, height: 18 },
+        zIndex: 2,
+        text: '+1 234 567 890',
+        fontFamily: 'Inter',
+        fontSize: 12,
+        fontWeight: '400',
+        color: 'rgba(255,255,255,0.85)',
+        textAlign: 'left'
+      },
+      {
+        id: 'qr-panel',
+        type: 'shape',
+        position: { x: 360, y: 32 },
+        size: { width: 128, height: 128 },
+        zIndex: 1,
+        shapeType: 'rectangle',
+        fill: '#FFFFFF',
+        stroke: 'none',
+        cornerRadius: 12
+      },
+      {
+        id: 'qrcode',
+        type: 'qrcode',
+        position: { x: 376, y: 48 },
+        size: { width: 96, height: 96 },
+        zIndex: 2,
+        qrSettings: { errorLevel: 'M', margin: 6, cornerRadius: 6 }
+      }
+    ]
+  },
+  {
+    id: 'social-connect',
+    name: 'Social Connect',
+    category: 'creative',
+    preview: '/templates/social-connect.svg',
+    settings: {
+      width: 400,
+      height: 400,
+      backgroundColor: '#0a1017',
+      gradient: {
+        type: 'linear',
+        colors: ['#071226', '#071226'],
+        direction: '180deg'
+      },
+      padding: 28,
+      borderRadius: 18,
+      shadow: true,
+      shadowColor: 'rgba(0,0,0,0.45)',
+      shadowBlur: 30,
+      shadowOffset: { x: 0, y: 14 }
+    },
+    elements: [
+      {
+        id: 'dots-bg',
+        type: 'shape',
+        position: { x: 16, y: 16 },
+        size: { width: 368, height: 368 },
+        zIndex: 0,
+        shapeType: 'rectangle',
+        fill: "repeating-radial-gradient(circle at 0 0, rgba(14,165,164,0.06) 0 2px, transparent 2px 16px)",
+        stroke: 'none',
+        cornerRadius: 12
+      },
+      {
+        id: 'follow',
+        type: 'text',
+        position: { x: 50, y: 40 },
+        size: { width: 300, height: 18 },
+        zIndex: 2,
+        text: 'FOLLOW ME',
+        fontFamily: 'Inter',
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#06b6d4',
+        textAlign: 'center'
+      },
+      {
+        id: 'username',
+        type: 'text',
+        position: { x: 50, y: 66 },
+        size: { width: 300, height: 28 },
+        zIndex: 2,
+        text: '@username',
+        fontFamily: 'Inter',
+        fontSize: 22,
+        fontWeight: '700',
+        color: '#FFFFFF',
+        textAlign: 'center'
+      },
+      {
+        id: 'qr-frame',
+        type: 'shape',
+        position: { x: 105, y: 110 },
+        size: { width: 190, height: 190 },
+        zIndex: 1,
+        shapeType: 'rectangle',
+        fill: '#FFFFFF',
+        stroke: 'none',
+        cornerRadius: 22
+      },
+      {
+        id: 'qrcode',
+        type: 'qrcode',
+        position: { x: 116, y: 122 },
+        size: { width: 168, height: 168 },
+        zIndex: 2,
+        qrSettings: { errorLevel: 'H', margin: 0, cornerRadius: 8 }
+      },
+      {
+        id: 'cta',
+        type: 'text',
+        position: { x: 102, y: 320 },
+        size: { width: 196, height: 36 },
+        zIndex: 2,
+        text: 'Scan to Connect',
+        fontFamily: 'Inter',
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#061b14',
         textAlign: 'center'
       }
     ]

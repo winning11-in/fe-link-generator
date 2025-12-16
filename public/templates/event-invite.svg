@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0b1720"/>
+      <stop offset="100%" stop-color="#0f2937"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" rx="16" fill="url(#g1)" />
+  <text x="50%" y="12%" text-anchor="middle" fill="#FDE68A" font-family="Inter, sans-serif" font-size="12">YOU'RE INVITED</text>
+  <text x="50%" y="20%" text-anchor="middle" fill="#ffffff" font-family="Inter, sans-serif" font-weight="700" font-size="26">Event Name</text>
+  <rect x="120" y="120" rx="18" width="160" height="36" fill="rgba(255,255,255,0.06)" />
+  <text x="50%" y="34%" text-anchor="middle" fill="#fff" font-family="Inter, sans-serif" font-weight="700" font-size="20">7:00 PM</text>
+  <rect x="75" y="270" rx="20" width="250" height="250" fill="#fff" />
+  <text x="50%" y="88%" text-anchor="middle" fill="#cbd5e1" font-family="Inter, sans-serif" font-size="12">Scan for details</text>
+</svg>

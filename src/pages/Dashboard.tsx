@@ -64,7 +64,7 @@ const Dashboard = () => {
             <div style={{ display: 'flex', gap: 8 }}>
             <Button
               type="primary"
-              onClick={() => navigate('/create', { state: { skipDraft: true } })}
+              onClick={() => navigate('/create')}
               style={{
                 height: 40,
                 paddingLeft: 16,
@@ -80,22 +80,6 @@ const Dashboard = () => {
               }}
             >
            <Plus size={16} />   Create New
-            </Button>
-            <Button
-              type="default"
-              onClick={() => navigate('/create?mode=draft')}
-              style={{
-                height: 40,
-                paddingLeft: 12,
-                paddingRight: 12,
-                borderRadius: 8,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                fontSize: 14,
-              }}
-            >
-              Drafts
             </Button>
             </div>
           </div>
@@ -152,7 +136,7 @@ const Dashboard = () => {
             <Col xs={24} sm={12} md={8} lg={6}>
               <Card
                 hoverable
-                onClick={() => navigate('/create', { state: { skipDraft: true } })}
+                onClick={() => navigate('/create') }
                 style={{
                   borderRadius: 12,
                   border: "2px dashed #667eea",

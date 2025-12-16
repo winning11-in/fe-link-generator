@@ -163,13 +163,20 @@ const CardPreview: React.FC<CardPreviewProps> = ({
         );
 
       case 'shape':
+        // support gradient/pattern fills (strings that include 'gradient' or 'url(' etc.)
+        const fillVal = element.fill as string | undefined;
+        const useBgImage = typeof fillVal === 'string' && (/gradient|radial|repeating|url\(/i).test(fillVal);
+
         return (
           <div
             key={element.id}
             data-element-id={element.id}
             style={{
               ...elementStyle,
-              backgroundColor: element.fill,
+              backgroundColor: useBgImage ? undefined : fillVal,
+              backgroundImage: useBgImage ? fillVal : undefined,
+              backgroundRepeat: useBgImage ? 'no-repeat' : undefined,
+              backgroundSize: useBgImage ? 'cover' : undefined,
               border: element.stroke ? `${element.strokeWidth || 1}px solid ${element.stroke}` : 'none',
               borderRadius: element.shapeType === 'circle' ? '50%' : 
                            element.cornerRadius ? `${element.cornerRadius}px` : '0'
