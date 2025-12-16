@@ -31,6 +31,7 @@ export interface QRTemplate {
   textColor: string;
   title: string;
   subtitle: string;
+  elements?: QRTemplateElement[];
   // Extended styling options
   titleFontSize?: number;
   subtitleFontSize?: number;
@@ -53,6 +54,18 @@ export interface QRTemplate {
   shadowIntensity?: 'none' | 'light' | 'medium' | 'strong';
   decorativeStyle?: 'none' | 'circles' | 'dots' | 'lines' | 'geometric';
   accentColor?: string;
+}
+
+export interface QRTemplateElement {
+  id: string;
+  type?: 'text' | 'logo';
+  text?: string;
+  fontSize?: number;
+  fontWeight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  color?: string;
+  letterSpacing?: number;
+  opacity?: number;
+  textAlign?: 'left' | 'center' | 'right';
 }
 
 export interface QRStyling {
@@ -221,32 +234,7 @@ export const defaultTemplates: QRTemplate[] = [
     decorativeStyle: 'dots',
     accentColor: '#f43f5e',
   },
-  // Vibrant & Creative
-  {
-    id: 'neon-cyber',
-    name: 'Neon Cyber',
-    backgroundColor: '#0f0f23',
-    textColor: '#00ff88',
-    title: 'Digital Hub',
-    subtitle: 'Enter the matrix',
-    titleFontSize: 26,
-    subtitleFontSize: 14,
-    titleFontWeight: 'bold',
-    fontFamily: 'Space Grotesk',
-    textAlign: 'center',
-    qrPosition: 'bottom',
-    borderRadius: 8,
-    showGradient: true,
-    gradientColor: '#1a1a3e',
-    gradientDirection: 'to-bottom',
-    padding: 24,
-    showBorder: true,
-    borderColor: '#00ff88',
-    borderWidth: 2,
-    shadowIntensity: 'strong',
-    decorativeStyle: 'lines',
-    accentColor: '#00ffff',
-  },
+ 
   {
     id: 'sunset-gradient',
     name: 'Sunset Gradient',
@@ -313,48 +301,36 @@ export const defaultTemplates: QRTemplate[] = [
     decorativeStyle: 'circles',
     accentColor: '#90e0ef',
   },
-  // Minimal & Clean
+  // Event invite example with multiple text elements
   {
-    id: 'elegant-white',
-    name: 'Elegant White',
-    backgroundColor: '#ffffff',
-    textColor: '#1f2937',
-    title: 'Contact Info',
-    subtitle: 'Professional networking',
-    titleFontSize: 22,
+    id: 'event-invite',
+    name: 'Event Invite',
+    backgroundColor: '#0f1724',
+    textColor: '#ffffff',
+    title: 'Event Name',
+    subtitle: '',
+    titleFontSize: 28,
     subtitleFontSize: 12,
-    titleFontWeight: 'semibold',
-    fontFamily: 'Inter',
+    titleFontWeight: 'bold',
+    fontFamily: 'Playfair Display',
     textAlign: 'center',
     qrPosition: 'bottom',
-    borderRadius: 20,
-    showGradient: false,
+    borderRadius: 18,
+    showGradient: true,
+    gradientColor: '#27272a',
+    gradientDirection: 'to-bottom',
     padding: 28,
-    showBorder: true,
-    borderColor: '#e5e7eb',
-    borderWidth: 1,
-    shadowIntensity: 'light',
-    decorativeStyle: 'none',
+    shadowIntensity: 'strong',
+    decorativeStyle: 'dots',
+    accentColor: '#f59e0b',
+    elements: [
+      { id: 'date', type: 'text', text: 'December 25, 2024', fontSize: 12, fontWeight: 'semibold', color: '#ffffff', letterSpacing: 0, opacity: 1, textAlign: 'center' },
+      { id: 'time', type: 'text', text: '7:00 PM', fontSize: 20, fontWeight: 'bold', color: '#ffffff', letterSpacing: 0, opacity: 1, textAlign: 'center' },
+      { id: 'venue', type: 'text', text: 'Venue Location', fontSize: 12, fontWeight: 'normal', color: '#d1d5db', letterSpacing: 0, opacity: 0.95, textAlign: 'center' },
+      { id: 'desc', type: 'text', text: 'Join us for an unforgettable celebration!', fontSize: 12, fontWeight: 'normal', color: '#d1d5db', letterSpacing: 0, opacity: 0.85, textAlign: 'center' },
+    ],
   },
-  {
-    id: 'minimalist',
-    name: 'Minimalist',
-    backgroundColor: '#f8fafc',
-    textColor: '#0f172a',
-    title: 'Simple QR',
-    subtitle: 'Clean and modern',
-    titleFontSize: 20,
-    subtitleFontSize: 12,
-    titleFontWeight: 'medium',
-    fontFamily: 'Inter',
-    textAlign: 'center',
-    qrPosition: 'bottom',
-    borderRadius: 12,
-    showGradient: false,
-    padding: 24,
-    shadowIntensity: 'light',
-    decorativeStyle: 'none',
-  },
+ 
   // Nature & Organic
   {
     id: 'fresh-green',
@@ -674,4 +650,5 @@ export const defaultTemplates: QRTemplate[] = [
     decorativeStyle: 'dots',
     accentColor: '#a78bfa',
   },
+  
 ];

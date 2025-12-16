@@ -337,6 +337,25 @@ const QRCodePreview = forwardRef<HTMLDivElement, QRCodePreviewProps>(({
           {template.subtitle}
         </p>
       )}
+
+      {/* Render additional elements if present */}
+      {template.elements && template.elements.length > 0 && (
+        <div className="w-full mt-3 z-10">
+          {template.elements.map((el) => (
+            <div key={el.id} style={{ textAlign: el.textAlign || textAlign, opacity: el.opacity ?? 1, marginTop: 8 }}>
+              <p style={{
+                color: el.color || template.textColor,
+                fontSize: `${el.fontSize || 14}px`,
+                fontWeight: (el.fontWeight && fontWeightMap[el.fontWeight]) || 400,
+                margin: 0,
+                lineHeight: 1.2,
+                fontFamily,
+                letterSpacing: `${el.letterSpacing || 0}px`,
+              }}>{el.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 

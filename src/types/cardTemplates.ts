@@ -57,6 +57,12 @@ export interface CardElement {
   stroke?: string;
   strokeWidth?: number;
   cornerRadius?: number;
+  // Shadow / effects
+  shadow?: boolean;
+  shadowColor?: string;
+  shadowBlur?: number;
+  shadowOffset?: { x: number; y: number };
+
   // Animation
   animation?: {
     type: 'none' | 'fade' | 'slide' | 'scale';

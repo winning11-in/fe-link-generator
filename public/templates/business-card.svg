@@ -1,8 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="520" height="280" viewBox="0 0 520 280">
-  <rect width="100%" height="100%" rx="12" fill="#0f1724" />
-  <rect x="28" y="32" width="260" height="120" fill="transparent" />
-  <text x="36" y="62" fill="#fff" font-family="Inter, sans-serif" font-weight="700" font-size="22">Your Name</text>
-  <text x="36" y="92" fill="rgba(255,255,255,0.85)" font-family="Inter, sans-serif" font-size="14">Job Title</text>
-  <text x="36" y="120" fill="#06b6d4" font-family="Inter, sans-serif" font-weight="600" font-size="14">Company Name</text>
-  <rect x="360" y="32" rx="12" width="128" height="128" fill="#fff" />
+  <defs>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#071226"/>
+      <stop offset="100%" stop-color="#0b1420"/>
+    </linearGradient>
+    <filter id="f2" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" rx="16" fill="url(#g2)" />
+
+  <g transform="translate(36,34)">
+    <text x="0" y="0" fill="#fff" font-family="Poppins, sans-serif" font-weight="700" font-size="26">Your Name</text>
+    <text x="0" y="36" fill="rgba(255,255,255,0.85)" font-family="Inter, sans-serif" font-size="14">Job Title</text>
+    <text x="0" y="64" fill="#06b6d4" font-family="Inter, sans-serif" font-weight="600" font-size="14">Company Name</text>
+
+    <text x="0" y="96" fill="rgba(255,255,255,0.85)" font-family="Inter, sans-serif" font-size="12">email@example.com</text>
+    <text x="0" y="116" fill="rgba(255,255,255,0.85)" font-family="Inter, sans-serif" font-size="12">+1 234 567 890</text>
+  </g>
+
+  <!-- QR panel -->
+  <rect x="360" y="32" rx="16" width="136" height="136" fill="#fff" filter="url(#f2)" />
+  <rect x="376" y="48" rx="10" width="104" height="104" fill="#000" />
+
+  <!-- bottom accent line -->
+  <rect x="28" y="244" rx="6" width="464" height="8" fill="linear-gradient(90deg, #06b6d4, #00d4c1)" />
 </svg>

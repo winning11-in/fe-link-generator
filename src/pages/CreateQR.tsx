@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Card, Typography, message, Row, Col } from 'antd';
+import QRTemplateEditorModal from '../components/templates/editor/QRTemplateEditorModal';
+import useQRTemplates from '../hooks/useQRTemplates';
 import { Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AppLayout from '../components/layout/AppLayout';
@@ -38,6 +40,8 @@ const CreateQR: React.FC = () => {
   const [name, setName] = useState('');
   const [initialized, setInitialized] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [qrEditorOpen, setQREditorOpen] = useState(false);
+  const { updateTemplate } = useQRTemplates();
 
   useEffect(() => {
     setInitialized(true);
@@ -195,6 +199,7 @@ const CreateQR: React.FC = () => {
             <Col xs={24} lg={8}>
               <Card 
                 title="Live Preview" 
+                extra={<Button size="small" onClick={() => setQREditorOpen(true)}>Edit</Button>}
                 className="sticky top-6"
               >
                 <div className="flex flex-col items-center">
@@ -211,6 +216,13 @@ const CreateQR: React.FC = () => {
                   </Text>
                 </div>
               </Card>
+              <QRTemplateEditorModal
+                open={qrEditorOpen}
+                template={template}
+                styling={styling}
+                onClose={() => setQREditorOpen(false)}
+                onSave={(t) => { setTemplate(t); updateTemplate(t); }}
+              />
             </Col>
           </Row>
         </div>

@@ -514,49 +514,49 @@ export const cardTemplates: CardTemplate[] = [
   },
   {
     id: 'event-invite',
-    name: 'Event Invite',
-    category: 'modern',
+    name: 'Event Invite (Elegant)',
+    category: 'event',
     preview: '/templates/event-invite.svg',
     settings: {
       width: 400,
       height: 600,
-      backgroundColor: '#0b1720',
+      backgroundColor: '#0b0b0d',
       gradient: {
-        type: 'linear',
-        colors: ['#0b1720', '#0f2937'],
+        type: 'radial',
+        colors: ['#0b0b0d', '#101214', '#0f0e10'],
         direction: '180deg'
       },
       padding: 32,
-      borderRadius: 16,
+      borderRadius: 24,
       shadow: true,
-      shadowColor: 'rgba(0,0,0,0.5)',
-      shadowBlur: 36,
-      shadowOffset: { x: 0, y: 18 }
+      shadowColor: 'rgba(0,0,0,0.6)',
+      shadowBlur: 48,
+      shadowOffset: { x: 0, y: 20 }
     },
     elements: [
       {
         id: 'invite-label',
         type: 'text',
-        position: { x: 50, y: 36 },
-        size: { width: 300, height: 20 },
-        zIndex: 2,
+        position: { x: 50, y: 28 },
+        size: { width: 300, height: 18 },
+        zIndex: 4,
         text: "YOU'RE INVITED",
         fontFamily: 'Inter',
         fontSize: 12,
         fontWeight: '600',
-        color: '#FDE68A',
+        color: '#E6C16B',
         textAlign: 'center',
-        letterSpacing: 1.2
+        letterSpacing: 1.6
       },
       {
         id: 'event-name',
         type: 'text',
-        position: { x: 50, y: 68 },
-        size: { width: 300, height: 46 },
-        zIndex: 2,
+        position: { x: 50, y: 56 },
+        size: { width: 300, height: 56 },
+        zIndex: 4,
         text: 'Event Name',
-        fontFamily: 'Inter',
-        fontSize: 28,
+        fontFamily: 'Playfair Display',
+        fontSize: 32,
         fontWeight: '700',
         color: '#FFFFFF',
         textAlign: 'center'
@@ -564,20 +564,33 @@ export const cardTemplates: CardTemplate[] = [
       {
         id: 'date-pill',
         type: 'shape',
-        position: { x: 120, y: 130 },
-        size: { width: 160, height: 36 },
-        zIndex: 2,
+        position: { x: 120, y: 128 },
+        size: { width: 160, height: 42 },
+        zIndex: 4,
         shapeType: 'rectangle',
-        fill: 'linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+        fill: 'linear-gradient(90deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04))',
         stroke: 'none',
-        cornerRadius: 18
+        cornerRadius: 22
+      },
+      {
+        id: 'date-text',
+        type: 'text',
+        position: { x: 50, y: 138 },
+        size: { width: 300, height: 24 },
+        zIndex: 5,
+        text: 'December 25, 2024',
+        fontFamily: 'Inter',
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#FFFFFF',
+        textAlign: 'center'
       },
       {
         id: 'time-text',
         type: 'text',
-        position: { x: 50, y: 190 },
+        position: { x: 50, y: 188 },
         size: { width: 300, height: 24 },
-        zIndex: 2,
+        zIndex: 4,
         text: '7:00 PM',
         fontFamily: 'Inter',
         fontSize: 20,
@@ -586,70 +599,98 @@ export const cardTemplates: CardTemplate[] = [
         textAlign: 'center'
       },
       {
-        id: 'description',
+        id: 'venue',
         type: 'text',
-        position: { x: 50, y: 224 },
-        size: { width: 300, height: 40 },
-        zIndex: 2,
+        position: { x: 50, y: 216 },
+        size: { width: 300, height: 20 },
+        zIndex: 4,
+        text: 'Venue Location',
+        fontFamily: 'Inter',
+        fontSize: 12,
+        fontWeight: '500',
+        color: 'rgba(255,255,255,0.88)',
+        textAlign: 'center'
+      },
+      {
+        id: 'desc',
+        type: 'text',
+        position: { x: 50, y: 246 },
+        size: { width: 300, height: 36 },
+        zIndex: 4,
         text: 'Join us for an unforgettable celebration!',
         fontFamily: 'Inter',
         fontSize: 12,
         fontWeight: '300',
-        color: 'rgba(255,255,255,0.85)',
-        textAlign: 'center'
+        color: 'rgba(255,255,255,0.82)',
+        textAlign: 'center',
+        lineHeight: 1.4
       },
       {
-        id: 'qr-background',
+        id: 'qr-bg',
         type: 'shape',
-        position: { x: 75, y: 270 },
-        size: { width: 250, height: 250 },
-        zIndex: 1,
+        position: { x: 95, y: 280 },
+        size: { width: 210, height: 210 },
+        zIndex: 2,
         shapeType: 'rectangle',
         fill: '#FFFFFF',
         stroke: 'none',
-        cornerRadius: 20
+        cornerRadius: 20,
+        shadow: true
       },
       {
         id: 'qrcode',
         type: 'qrcode',
-        position: { x: 95, y: 290 },
-        size: { width: 210, height: 210 },
-        zIndex: 2,
-        qrSettings: { errorLevel: 'M', margin: 0, cornerRadius: 12 }
+        position: { x: 115, y: 300 },
+        size: { width: 170, height: 170 },
+        zIndex: 5,
+        qrSettings: { errorLevel: 'H', margin: 8, cornerRadius: 12 }
+      },
+      {
+        id: 'caption',
+        type: 'text',
+        position: { x: 50, y: 512 },
+        size: { width: 300, height: 18 },
+        zIndex: 4,
+        text: 'Scan for details',
+        fontFamily: 'Inter',
+        fontSize: 12,
+        fontWeight: '400',
+        color: 'rgba(255,255,255,0.7)',
+        textAlign: 'center'
       }
     ]
   },
   {
     id: 'business-card-compact',
-    name: 'Business Card Compact',
+    name: 'Business Card (Blue Accent)',
     category: 'business',
     preview: '/templates/business-card.svg',
     settings: {
       width: 520,
       height: 280,
-      backgroundColor: '#0f1724',
+      backgroundColor: '#0b1420',
       gradient: {
         type: 'linear',
-        colors: ['#071226', '#0f1724'],
+        colors: ['#071226', '#0b1420'],
         direction: '90deg'
       },
       padding: 20,
-      borderRadius: 12,
+      borderRadius: 16,
       shadow: true,
-      shadowColor: 'rgba(0,0,0,0.35)',
-      shadowBlur: 18,
-      shadowOffset: { x: 0, y: 8 }
+      shadowColor: 'rgba(2,6,23,0.6)',
+      shadowBlur: 28,
+      shadowOffset: { x: 0, y: 12 }
     },
     elements: [
       {
         id: 'left-name',
         type: 'text',
-        position: { x: 28, y: 36 },
-        size: { width: 260, height: 32 },
-        zIndex: 2,
+        position: { x: 36, y: 34 },
+        size: { width: 260, height: 36 },
+        zIndex: 3,
         text: 'Your Name',
-        fontFamily: 'Inter',
-        fontSize: 22,
+        fontFamily: 'Poppins',
+        fontSize: 26,
         fontWeight: '700',
         color: '#FFFFFF',
         textAlign: 'left'
@@ -657,9 +698,9 @@ export const cardTemplates: CardTemplate[] = [
       {
         id: 'job-title',
         type: 'text',
-        position: { x: 28, y: 72 },
+        position: { x: 36, y: 74 },
         size: { width: 260, height: 22 },
-        zIndex: 2,
+        zIndex: 3,
         text: 'Job Title',
         fontFamily: 'Inter',
         fontSize: 14,
@@ -670,9 +711,9 @@ export const cardTemplates: CardTemplate[] = [
       {
         id: 'company',
         type: 'text',
-        position: { x: 28, y: 100 },
+        position: { x: 36, y: 104 },
         size: { width: 260, height: 22 },
-        zIndex: 2,
+        zIndex: 3,
         text: 'Company Name',
         fontFamily: 'Inter',
         fontSize: 14,
@@ -683,9 +724,9 @@ export const cardTemplates: CardTemplate[] = [
       {
         id: 'contact-1',
         type: 'text',
-        position: { x: 28, y: 132 },
+        position: { x: 36, y: 136 },
         size: { width: 260, height: 18 },
-        zIndex: 2,
+        zIndex: 3,
         text: 'email@example.com',
         fontFamily: 'Inter',
         fontSize: 12,
@@ -696,9 +737,9 @@ export const cardTemplates: CardTemplate[] = [
       {
         id: 'contact-2',
         type: 'text',
-        position: { x: 28, y: 154 },
+        position: { x: 36, y: 158 },
         size: { width: 260, height: 18 },
-        zIndex: 2,
+        zIndex: 3,
         text: '+1 234 567 890',
         fontFamily: 'Inter',
         fontSize: 12,
@@ -710,42 +751,54 @@ export const cardTemplates: CardTemplate[] = [
         id: 'qr-panel',
         type: 'shape',
         position: { x: 360, y: 32 },
-        size: { width: 128, height: 128 },
-        zIndex: 1,
+        size: { width: 136, height: 136 },
+        zIndex: 2,
         shapeType: 'rectangle',
         fill: '#FFFFFF',
         stroke: 'none',
-        cornerRadius: 12
+        cornerRadius: 16,
+        shadow: true
       },
       {
         id: 'qrcode',
         type: 'qrcode',
         position: { x: 376, y: 48 },
-        size: { width: 96, height: 96 },
-        zIndex: 2,
-        qrSettings: { errorLevel: 'M', margin: 6, cornerRadius: 6 }
+        size: { width: 104, height: 104 },
+        zIndex: 3,
+        qrSettings: { errorLevel: 'H', margin: 8, cornerRadius: 10 }
+      },
+      {
+        id: 'accent-line',
+        type: 'shape',
+        position: { x: 28, y: 244 },
+        size: { width: 464, height: 8 },
+        zIndex: 4,
+        shapeType: 'rectangle',
+        fill: 'linear-gradient(90deg, #06b6d4, #00d4c1)',
+        stroke: 'none',
+        cornerRadius: 6
       }
     ]
   },
   {
     id: 'social-connect',
-    name: 'Social Connect',
-    category: 'creative',
+    name: 'Social Connect (Dot Grid)',
+    category: 'social',
     preview: '/templates/social-connect.svg',
     settings: {
       width: 400,
       height: 400,
-      backgroundColor: '#0a1017',
+      backgroundColor: '#071122',
       gradient: {
         type: 'linear',
-        colors: ['#071226', '#071226'],
+        colors: ['#071122', '#071f1b'],
         direction: '180deg'
       },
       padding: 28,
       borderRadius: 18,
       shadow: true,
-      shadowColor: 'rgba(0,0,0,0.45)',
-      shadowBlur: 30,
+      shadowColor: 'rgba(2,6,23,0.6)',
+      shadowBlur: 34,
       shadowOffset: { x: 0, y: 14 }
     },
     elements: [
@@ -756,14 +809,14 @@ export const cardTemplates: CardTemplate[] = [
         size: { width: 368, height: 368 },
         zIndex: 0,
         shapeType: 'rectangle',
-        fill: "repeating-radial-gradient(circle at 0 0, rgba(14,165,164,0.06) 0 2px, transparent 2px 16px)",
+        fill: "repeating-radial-gradient(circle at 0 0, rgba(16,185,129,0.06) 0 2px, transparent 2px 18px), linear-gradient(180deg, rgba(6,182,212,0.04), rgba(5,10,15,0.06))",
         stroke: 'none',
         cornerRadius: 12
       },
       {
         id: 'follow',
         type: 'text',
-        position: { x: 50, y: 40 },
+        position: { x: 50, y: 36 },
         size: { width: 300, height: 18 },
         zIndex: 2,
         text: 'FOLLOW ME',
@@ -776,11 +829,11 @@ export const cardTemplates: CardTemplate[] = [
       {
         id: 'username',
         type: 'text',
-        position: { x: 50, y: 66 },
+        position: { x: 50, y: 64 },
         size: { width: 300, height: 28 },
         zIndex: 2,
         text: '@username',
-        fontFamily: 'Inter',
+        fontFamily: 'Poppins',
         fontSize: 22,
         fontWeight: '700',
         color: '#FFFFFF',
@@ -795,22 +848,34 @@ export const cardTemplates: CardTemplate[] = [
         shapeType: 'rectangle',
         fill: '#FFFFFF',
         stroke: 'none',
-        cornerRadius: 22
+        cornerRadius: 22,
+        shadow: true
       },
       {
         id: 'qrcode',
         type: 'qrcode',
         position: { x: 116, y: 122 },
         size: { width: 168, height: 168 },
-        zIndex: 2,
-        qrSettings: { errorLevel: 'H', margin: 0, cornerRadius: 8 }
+        zIndex: 3,
+        qrSettings: { errorLevel: 'H', margin: 0, cornerRadius: 10 }
       },
       {
-        id: 'cta',
+        id: 'cta-pill',
+        type: 'shape',
+        position: { x: 122, y: 320 },
+        size: { width: 156, height: 40 },
+        zIndex: 4,
+        shapeType: 'rectangle',
+        fill: 'linear-gradient(90deg, #05e08a, #00e6a8)',
+        stroke: 'none',
+        cornerRadius: 40
+      },
+      {
+        id: 'cta-text',
         type: 'text',
-        position: { x: 102, y: 320 },
-        size: { width: 196, height: 36 },
-        zIndex: 2,
+        position: { x: 122, y: 328 },
+        size: { width: 156, height: 24 },
+        zIndex: 5,
         text: 'Scan to Connect',
         fontFamily: 'Inter',
         fontSize: 14,
