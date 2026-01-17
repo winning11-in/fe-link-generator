@@ -45,6 +45,10 @@ import {
 import QRCodePreview from "./QRCodePreview";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+// Custom styles for template editor inputs
+const inputStyles = { height: 32, minHeight: 32 };
+const selectStyles = { height: 32, minHeight: 32 };
+
 interface TemplateEditorModalProps {
   open: boolean;
   onClose: () => void;
@@ -305,6 +309,7 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
                 onChange={(e) => updateField(field.id, { value: e.target.value })}
                 placeholder="Enter content..."
                 size="small"
+                style={inputStyles}
                 className="flex-1 text-xs"
               />
               <Popover
@@ -337,6 +342,7 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
                   options={fontWeightOptions}
                   className="w-full"
                   size="small"
+                  style={selectStyles}
                 />
               </div>
             </div>
@@ -381,8 +387,9 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
     </div>
   );
 
-  // Content Tab for mobile
-  const ContentTab = () => (
+
+  // Use inline JSX instead of component functions to prevent re-mounting on state change
+  const contentTabContent = (
     <div className="space-y-3 overflow-y-auto px-1" style={{ maxHeight: isMobile ? 'calc(100vh - 200px)' : 520 }}>
       {/* Main Title & Subtitle */}
       <Card size="small" className="border-border" bodyStyle={{ padding: isMobile ? 8 : 12 }}>
@@ -396,6 +403,7 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
                 onChange={(e) => onTemplateChange({ ...template, title: e.target.value })}
                 placeholder="Enter title"
                 size="small"
+                style={inputStyles}
                 className="flex-1 text-xs"
               />
               <Popover
@@ -427,6 +435,7 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
                 options={fontWeightOptions}
                 className="w-full"
                 size="small"
+                style={selectStyles}
               />
             </div>
           </div>
@@ -439,6 +448,7 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
                 onChange={(e) => onTemplateChange({ ...template, subtitle: e.target.value })}
                 placeholder="Enter subtitle"
                 size="small"
+                style={inputStyles}
                 className="flex-1 text-xs"
               />
               <Popover
@@ -470,6 +480,7 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
                 options={fontWeightOptions}
                 className="w-full"
                 size="small"
+                style={selectStyles}
               />
             </div>
           </div>
@@ -519,8 +530,7 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
     </div>
   );
 
-  // Style Tab for mobile
-  const StyleTab = () => (
+  const styleTabContent = (
     <div className="space-y-3 overflow-y-auto px-1" style={{ maxHeight: isMobile ? 'calc(100vh - 200px)' : 520 }}>
       {/* Typography */}
       <Card size="small" className="border-border" bodyStyle={{ padding: isMobile ? 8 : 12 }}>
@@ -534,6 +544,7 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
               options={fontFamilyOptions}
               className="w-full"
               size="small"
+              style={selectStyles}
               showSearch
               optionFilterProp="label"
             />
@@ -550,6 +561,7 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
               ]}
               className="w-full"
               size="small"
+              style={selectStyles}
             />
           </div>
         </div>
@@ -617,6 +629,7 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
                   ]}
                   className="w-full"
                   size="small"
+                  style={selectStyles}
                 />
               </div>
             </div>
@@ -665,6 +678,7 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
               ]}
               className="w-full"
               size="small"
+              style={selectStyles}
             />
           </div>
         </div>
@@ -672,8 +686,7 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
     </div>
   );
 
-  // Layout Tab (color presets) for mobile
-  const LayoutTab = () => (
+  const layoutTabContent = (
     <div className="space-y-3 overflow-y-auto px-1" style={{ maxHeight: isMobile ? 'calc(100vh - 200px)' : 520 }}>
       {/* QR Label */}
       <Card size="small" className="border-border" bodyStyle={{ padding: isMobile ? 8 : 12 }}>
@@ -683,6 +696,7 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
           onChange={(e) => onTemplateChange({ ...template, qrLabel: e.target.value })}
           placeholder="e.g., Scan for details"
           size="small"
+          style={inputStyles}
           className="text-xs"
         />
       </Card>
@@ -778,17 +792,17 @@ const TemplateEditorModal: React.FC<TemplateEditorModalProps> = ({
     {
       key: "content",
       label: <span className="flex items-center gap-1 text-xs"><Type size={12} />Content</span>,
-      children: <ContentTab />,
+      children: contentTabContent,
     },
     {
       key: "style",
       label: <span className="flex items-center gap-1 text-xs"><Palette size={12} />Style</span>,
-      children: <StyleTab />,
+      children: styleTabContent,
     },
     {
       key: "layout",
       label: <span className="flex items-center gap-1 text-xs"><Layout size={12} />Layout</span>,
-      children: <LayoutTab />,
+      children: layoutTabContent,
     },
   ];
 
